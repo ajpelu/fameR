@@ -1,7 +1,7 @@
 #' Read data from all sheets of an uploaded file.
 #'
-#' This function reads data from all sheets of an uploaded file in ODS or XLSX format
-#' and returns them in a named list.
+#' This function reads data from all sheets of an uploaded file in ODS or XLSX 
+#' format and returns them in a named list.
 #'
 #' @param upload_path Character string specifying the path to the uploaded file.
 #' @param valid_sheets Character vector specifying the names of sheets that are 
