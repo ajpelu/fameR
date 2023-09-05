@@ -7,7 +7,7 @@
 #' @param valid_sheets Character vector specifying the names of sheets that are 
 #' expected to be in the uploaded file.
 #'
-#' @return A named list containing the data from all sheets in the uploaded file, 
+#' @return A named list containing data from all sheets in the uploaded file, 
 #' with sheet names as list names. 
 #'
 #' @importFrom readODS list_ods_sheets read_ods
