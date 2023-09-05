@@ -1,5 +1,6 @@
 library(shiny)
 library(bslib)
+library(bsicons)
 library(tidyverse)
 library(purrr)
 
@@ -21,7 +22,7 @@ cards <- list(
     ), 
   card(
     full_screen = TRUE, 
-    card_header("Humedad"), 
+    card_header("Datos de Humedad y Temperatura del suelo"), 
     tableOutput("humedad")
   )
 )
@@ -30,7 +31,22 @@ ui <- page_navbar(
   title = "Explorador fameR", 
   sidebar = upload,
   nav_panel("Datos generales", cards[[1]]), 
-  nav_panel("Humedad", cards[[2]])
+  nav_panel("Humedad", 
+            layout_columns(
+              fill = FALSE, 
+              value_box(
+                title = "Temperatura media del Suelo", 
+                showcase = bsicons::bs_icon("thermometer"),
+                value = textOutput("meanTemp"),
+                theme_color = "secondary"
+              ),
+              value_box(
+                title = "Humedad media del Suelo", 
+                showcase = bsicons::bs_icon("moisture"),
+                value = textOutput("meanHumedad"),
+                theme_color = "secondary"
+              )),
+            cards[[2]])
 )
 
 server <- function(input, output, session) {
@@ -51,6 +67,14 @@ server <- function(input, output, session) {
     data()$humedad_temp
     
   })
+  
+  output$meanTemp <- renderText(
+    mean(data()$humedad_temp$temperatura, na.rm=FALSE)
+  )
+  
+  output$meanHumedad <- renderText(
+    mean(data()$humedad_temp$humedad, na.rm=FALSE)
+  )
 }
 
 shinyApp(ui, server)
