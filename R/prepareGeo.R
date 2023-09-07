@@ -21,11 +21,12 @@ prepareGeo <- function(x) {
     stop("Input must be a non-null data frame.")
   }
   
+  
   # Check if input data frame contains the required columns
   if (!all(c("campo", "valor") %in% colnames(x))) {
     stop("Input data frame must have columns named 'campo' and 'valor'.")
-  }
-  
+    } 
+
   # Extract, filter, and transform data
   d_geo <- x |> 
     filter(campo %in% c("crs", "coord_x", "coord_y", "elevacion")) |> 
