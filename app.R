@@ -6,9 +6,14 @@ library(purrr)
 library(rcartocolor)
 library(ggdist)
 library(gghalves)
+library(sf)
+library(mapSpain)
+library(leaflet)
+
 
 
 source("R/readAllsheets.R")
+source("R/prepareGeo.R")
 hojas_validas <- "data/hojas_oficiales.csv" |> read.csv() |> pull()
 
 
@@ -95,11 +100,11 @@ server <- function(input, output, session) {
     nombre_variables <- c(
       altura_cm = "Altura", 
       dmayor_cm = "Diámetro mayor",
-      dmeno_cm = "Diámetro menor")
+      dmenor_cm = "Diámetro menor")
     
     biometry <- data()$especie_focal |> 
-      dplyr::select(especie:id_individuo, altura_cm, dmayor_cm, dmeno_cm) |> 
-      pivot_longer(cols = c(altura_cm, dmayor_cm, dmeno_cm)) |> 
+      dplyr::select(especie:id_individuo, altura_cm, dmayor_cm, dmenor_cm) |> 
+      pivot_longer(cols = c(altura_cm, dmayor_cm, dmenor_cm)) |> 
       mutate(name = recode(name, !!!nombre_variables))
     
     my_pal <- rcartocolor::carto_pal(n = 8, name = "Bold")[c(1, 3, 7, 2)]
@@ -134,8 +139,17 @@ server <- function(input, output, session) {
     coord_data <- st_transform(prepareGeo(data()$datos_generales), 4326)
   
     leaflet_map <- leaflet::leaflet(data = coord_data) |> 
-      leaflet::addTiles() |> 
-      leaflet::addMarkers() 
+      addProviderEspTiles("IGNBase.Gris", group = "Base") |> 
+      addProviderEspTiles("MTN", group = "MTN") |> 
+      addProviderEspTiles("LiDAR", group = "LIDAR") |> 
+      addProviderEspTiles('MDT.CurvasNivel', group = "Curvas de Nivel") |>
+      addProviderTiles('Esri.WorldImagery', group = "Ortofoto") |> 
+      leaflet::addMarkers() |> 
+      addLayersControl(
+        baseGroups = c("Base", "LIDAR", "Curvas de Nivel", "MTN", "Ortofoto"),
+        options = layersControlOptions(collapsed = FALSE)
+      )
+    
     })
   
   output$map <- leaflet::renderLeaflet({
