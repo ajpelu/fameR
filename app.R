@@ -9,11 +9,12 @@ library(gghalves)
 library(sf)
 library(mapSpain)
 library(leaflet)
-
+library(lubridate)
 
 
 source("R/readAllsheets.R")
 source("R/prepareGeo.R")
+source("R/preparePopup.R")
 hojas_validas <- "data/hojas_oficiales.csv" |> read.csv() |> pull()
 
 
@@ -137,6 +138,7 @@ server <- function(input, output, session) {
   leaflet_map <- reactive({
     
     coord_data <- st_transform(prepareGeo(data()$datos_generales), 4326)
+    custom_popup <- suppressWarnings(preparePopup(data()$datos_generales)) 
   
     leaflet_map <- leaflet::leaflet(data = coord_data) |> 
       addProviderEspTiles("IGNBase.Gris", group = "Base") |> 
@@ -144,7 +146,9 @@ server <- function(input, output, session) {
       addProviderEspTiles("LiDAR", group = "LIDAR") |> 
       addProviderEspTiles('MDT.CurvasNivel', group = "Curvas de Nivel") |>
       addProviderTiles('Esri.WorldImagery', group = "Ortofoto") |> 
-      leaflet::addMarkers() |> 
+      leaflet::addMarkers(
+        popup = custom_popup
+      ) |> 
       addLayersControl(
         baseGroups = c("Base", "LIDAR", "Curvas de Nivel", "MTN", "Ortofoto"),
         options = layersControlOptions(collapsed = FALSE)
