@@ -8,6 +8,7 @@
 #' @param xvar The name of the variable to be plotted in the x-axis of the ternary plot.
 #' @param yvar The name of the variable to be plotted in the y-axis of the ternary plot.
 #' @param zvar The name of the variable to be plotted in the z-axis of the ternary plot.
+#' @param bsize The base font size for the plot.
 #'
 #' @return A ggtern plot object displaying the ternary plot.
 #'
@@ -15,7 +16,10 @@
 #' by points in a triangular coordinate system. The `xvar`, `yvar`, and `zvar` 
 #' arguments allow you to specify which variables from the `data` argument should 
 #' be used for each axis. The function also capitalizes the first letter of each 
-#' variable name for use in the axis labels.
+#' variable name for use in the axis labels. You can adjust the base font size 
+#' (`bsize`) for the plot to control the text size.
+#'
+#' 
 #'
 #' @seealso \code{\link{ggtern}} for more information on creating ternary plots using ggtern.
 #'
@@ -35,7 +39,7 @@
 #' @import ggtern
 #' @importFrom stringr str_to_title
 #'
-ternaryPlot <- function(data, xvar, yvar, zvar) {
+ternaryPlot <- function(data, xvar, yvar, zvar, bsize) {
   # Capitalize the first letter of variable names for axis labels
   xvar_label <- str_to_title(xvar)
   yvar_label <- str_to_title(yvar)
@@ -52,7 +56,7 @@ ternaryPlot <- function(data, xvar, yvar, zvar) {
     ) +
     xlab("") + ylab("") + zlab("") +
     theme_showarrows() +
-    theme_bvbw()
+    theme_bvbw(base_size = bsize)
   
   return(plot)
 }
