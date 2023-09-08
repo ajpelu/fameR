@@ -10,11 +10,15 @@ library(sf)
 library(mapSpain)
 library(leaflet)
 library(lubridate)
+library(ggtern)
+library(stringr)
 
 
 source("R/readAllsheets.R")
 source("R/prepareGeo.R")
 source("R/preparePopup.R")
+source("R/ternaryPlot.R")
+
 hojas_validas <- "data/hojas_oficiales.csv" |> read.csv() |> pull()
 
 
@@ -44,6 +48,11 @@ cards <- list(
     full_screen = TRUE, 
     card_header("Mapa"), 
     leaflet::leafletOutput("map")
+  ),
+  card(
+    full_screen = TRUE, 
+    card_header("Suelos"), 
+    plotOutput("suelos")
   )
 )
 
@@ -68,6 +77,7 @@ ui <- page_navbar(
                 theme_color = "secondary"
               )),
             cards[[2]]), 
+  nav_panel("Suelos", cards[[5]]), 
   nav_panel("Biometria", cards[[3]])
 )
 
@@ -134,6 +144,19 @@ server <- function(input, output, session) {
       theme_minimal(base_size = 20) +
       xlab("") + ylab("")
   })
+  
+  ternary_data <- reactive({
+    data()$suelo |> 
+      dplyr::select(limo_g, limo_f, arcilla, arena) |> 
+      mutate(limo = sum(c_across(starts_with("limo"))))
+    }) 
+  
+  output$suelos <- renderPlot({
+    print(
+      ternaryPlot(ternary_data(), xvar = "arena", yvar = "arcilla",  zvar = "limo", bsize =20) 
+    ) # Note that the ggtern need to be plotted in a print environment 
+  })
+  
   
   leaflet_map <- reactive({
     
