@@ -18,6 +18,7 @@ source("R/readAllsheets.R")
 source("R/prepareGeo.R")
 source("R/preparePopup.R")
 source("R/ternaryPlot.R")
+source("R/neighborSpecies_stats.R")
 
 hojas_validas <- "data/hojas_oficiales.csv" |> read.csv() |> pull()
 
@@ -53,6 +54,11 @@ cards <- list(
     full_screen = TRUE, 
     card_header("Suelos"), 
     plotOutput("suelos")
+  ), 
+  card(
+    full_screen = TRUE, 
+    card_header("Vecindad"), 
+    plotOutput("vecindad")
   )
 )
 
@@ -78,7 +84,8 @@ ui <- page_navbar(
               )),
             cards[[2]]), 
   nav_panel("Suelos", cards[[5]]), 
-  nav_panel("Biometria", cards[[3]])
+  nav_panel("Biometria", cards[[3]]), 
+  nav_panel("Vecindad", cards[[6]])
 )
 
 server <- function(input, output, session) {
@@ -157,7 +164,6 @@ server <- function(input, output, session) {
     ) # Note that the ggtern need to be plotted in a print environment 
   })
   
-  
   leaflet_map <- reactive({
     
     coord_data <- st_transform(prepareGeo(data()$datos_generales), 4326)
@@ -182,6 +188,28 @@ server <- function(input, output, session) {
   output$map <- leaflet::renderLeaflet({
     req(leaflet_map())
     map <- leaflet_map()
+  })
+  
+  output$vecindad <- renderPlot({
+    stats_vecinos <- neighborSpecies_stats(data()$vecindad)
+    
+    ggplot(stats_vecinos, aes(x = especie_vecina, y = ab_mean)) +
+      geom_bar(stat = "identity", fill = "blue") +
+      geom_errorbar(aes(ymin = ab_mean - ab_se, 
+                        ymax = ab_mean + ab_se),
+                    width = 0.25, 
+                    position = position_dodge(width = 0.9), 
+                    colour = "blue") +
+      labs(x = "Especie Vecina",
+           y = "Abundancia (n. ind)") +
+      theme_minimal() + 
+      theme(axis.text.y = element_text(face = "italic")) + 
+      coord_flip() +
+      theme(
+        axis.text = element_text(size = 16), 
+        axis.title = element_text(size = 17)
+      ) 
+    
   })
   
 
