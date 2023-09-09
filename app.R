@@ -23,50 +23,34 @@ source("R/neighborSpecies_stats.R")
 hojas_validas <- "data/hojas_oficiales.csv" |> read.csv() |> pull()
 
 
-
+# Sidebar upload 
 upload <- fileInput("upload", 
                     label = "Subir la ficha de campo", 
                     accept = c(".ods", ".xlsx"),
                     placeholder = "Seleccione el archivo a subir")
 
 cards <- list(
-  card(
-    full_screen = TRUE,
-    card_header("Datos generales"),
-    tableOutput("metadata")
-    ), 
-  card(
-    full_screen = TRUE, 
-    card_header("Datos de Humedad y Temperatura del suelo"), 
-    tableOutput("humedad")
-  ), 
-  card(
-    full_screen = TRUE, 
-    card_header("Biometría"), 
-    plotOutput("biometria")
-  ), 
-  card(
-    full_screen = TRUE, 
-    card_header("Mapa"), 
-    leaflet::leafletOutput("map")
-  ),
-  card(
-    full_screen = TRUE, 
-    card_header("Suelos"), 
-    plotOutput("suelos")
-  ), 
-  card(
-    full_screen = TRUE, 
-    card_header("Vecindad"), 
-    plotOutput("vecindad")
+  card(full_screen = TRUE, card_header("Datos generales"), 
+       tableOutput("metadata")), 
+  card(full_screen = TRUE, card_header("Datos de Humedad y Temperatura del suelo"), 
+       tableOutput("humedad")), 
+  card(full_screen = TRUE, card_header("Biometría"), 
+    plotOutput("biometria")), 
+  card(full_screen = TRUE, card_header("Mapa"), 
+    leaflet::leafletOutput("map")),
+  card(full_screen = TRUE, card_header("Suelos"), 
+    plotOutput("suelos")), 
+  card(full_screen = TRUE, card_header("Vecindad"), 
+    plotOutput("vecindad"))
   )
-)
 
 ui <- page_navbar(
   title = "Explorador fameR", 
   sidebar = upload,
-  nav_panel("Datos generales", cards[[1]]), 
-  nav_panel("Localización", cards[[4]]),
+  nav_panel("Datos generales", 
+            cards[[1]]), 
+  nav_panel("Localización", 
+            cards[[4]]),
   nav_panel("Humedad", 
             layout_columns(
               fill = FALSE, 
@@ -83,17 +67,20 @@ ui <- page_navbar(
                 theme_color = "secondary"
               )),
             cards[[2]]), 
-  nav_panel("Suelos", cards[[5]]), 
-  nav_panel("Biometria", cards[[3]]), 
-  nav_panel("Vecindad", cards[[6]])
+  nav_panel("Suelos", 
+            cards[[5]]), 
+  nav_panel("Biometria", 
+            cards[[3]]), 
+  nav_panel("Vecindad", 
+            cards[[6]], 
+            downloadButton("downloadVecindad", "Download Plot"))
 )
 
 server <- function(input, output, session) {
   
   data <- reactive({
     req(input$upload)
-    readAllsheets(upload_path = input$upload$datapath, 
-                  valid_sheets = hojas_validas)
+    readAllsheets(upload_path = input$upload$datapath, valid_sheets = hojas_validas)
   })
   
   output$metadata <- renderTable({
@@ -112,15 +99,18 @@ server <- function(input, output, session) {
     mean(data()$humedad_temp$humedad, na.rm=FALSE)
   })
 
-
-  output$biometria <- renderPlot({
+ 
+  
+  
+  # Biometry
+  generateBiometriaPlot <- function(x){
     
     nombre_variables <- c(
       altura_cm = "Altura", 
       dmayor_cm = "Diámetro mayor",
       dmenor_cm = "Diámetro menor")
     
-    biometry <- data()$especie_focal |> 
+    biometry <- x$especie_focal |> 
       dplyr::select(especie:id_individuo, altura_cm, dmayor_cm, dmenor_cm) |> 
       pivot_longer(cols = c(altura_cm, dmayor_cm, dmenor_cm)) |> 
       mutate(name = recode(name, !!!nombre_variables))
@@ -130,13 +120,9 @@ server <- function(input, output, session) {
     ggplot(biometry, aes(x = as.factor(name), y = value, color = name, fill = name)) +
       scale_color_manual(values = my_pal, guide = "none") +
       scale_fill_manual(values = my_pal, guide = "none") + 
-      geom_boxplot(
-        width = .2, fill = "white",
-        size = 1.5, outlier.shape = NA
-      ) +
+      geom_boxplot( width = .2, fill = "white", size = 1.5, outlier.shape = NA) +
       theme(
-        axis.text = element_text(size = 24)
-      ) + 
+        axis.text = element_text(size = 24)) + 
       ggdist::stat_halfeye(
         adjust = .33, ## bandwidth
         width = .67, 
@@ -150,19 +136,28 @@ server <- function(input, output, session) {
       ) + coord_flip() +
       theme_minimal(base_size = 20) +
       xlab("") + ylab("")
+    
+  }
+  
+  output$biometria <- renderPlot({
+    generateBiometriaPlot(data())
   })
   
+  # Plot Soil ternary 
   ternary_data <- reactive({
     data()$suelo |> 
       dplyr::select(limo_g, limo_f, arcilla, arena) |> 
       mutate(limo = sum(c_across(starts_with("limo"))))
-    }) 
+  })
   
   output$suelos <- renderPlot({
     print(
-      ternaryPlot(ternary_data(), xvar = "arena", yvar = "arcilla",  zvar = "limo", bsize =20) 
+      ternaryPlot(ternary_data(), bsize =20,
+                  xvar = "arena", yvar = "arcilla",  zvar = "limo") 
     ) # Note that the ggtern need to be plotted in a print environment 
   })
+  
+  
   
   leaflet_map <- reactive({
     
@@ -190,10 +185,14 @@ server <- function(input, output, session) {
     map <- leaflet_map()
   })
   
-  output$vecindad <- renderPlot({
-    stats_vecinos <- neighborSpecies_stats(data()$vecindad)
-    
-    ggplot(stats_vecinos, aes(x = especie_vecina, y = ab_mean)) +
+  
+  # Vecindad 
+  stat_vecinos <- reactive({
+    neighborSpecies_stats(data()$vecindad)
+    })
+  
+  generateVecindadPlot <- function(x){
+    ggplot(x, aes(x = especie_vecina, y = ab_mean)) +
       geom_bar(stat = "identity", fill = "blue") +
       geom_errorbar(aes(ymin = ab_mean - ab_se, 
                         ymax = ab_mean + ab_se),
@@ -210,7 +209,22 @@ server <- function(input, output, session) {
         axis.title = element_text(size = 17)
       ) 
     
+    
+  }
+  
+  output$vecindad <- renderPlot({
+    generateVecindadPlot(stat_vecinos())
   })
+  
+  output$downloadVecindad <- downloadHandler(
+    filename = function() {
+      "vecindad_plot.png"  # Set the filename for the downloaded plot
+    },
+    content = function(file) {
+      g <- generateVecindadPlot(stat_vecinos())
+      ggsave(file, g)
+    }
+  )
   
 
 }
