@@ -33,7 +33,7 @@ neighborSpecies_stats <- function(data) {
     stop(paste("Required columns missing:", paste(missing_cols, collapse = ", ")))
   }
   
-  nplots <- length(unique(f$vecindad$individuo))
+  nplots <- length(unique(data$vecindad$individuo))
   
   result <- data %>%
     group_by(especie_vecina) %>%
