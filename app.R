@@ -12,6 +12,8 @@ library(leaflet)
 library(lubridate)
 library(ggtern)
 library(stringr)
+library(plotly)
+
 
 
 source("R/readAllsheets.R")
@@ -19,6 +21,7 @@ source("R/prepareGeo.R")
 source("R/preparePopup.R")
 source("R/ternaryPlot.R")
 source("R/neighborSpecies_stats.R")
+source("R/neighborAbundance_stats.R")
 
 hojas_validas <- "data/hojas_oficiales.csv" |> read.csv() |> pull()
 
@@ -30,51 +33,73 @@ upload <- fileInput("upload",
                     placeholder = "Seleccione el archivo a subir")
 
 cards <- list(
-  card(full_screen = TRUE, card_header("Datos generales"), 
+  md = card(full_screen = TRUE, card_header("Datos generales"), 
        tableOutput("metadata")), 
-  card(full_screen = TRUE, card_header("Datos de Humedad y Temperatura del suelo"), 
+  humedad = card(full_screen = TRUE, card_header("Datos de Humedad y Temperatura del suelo"), 
        tableOutput("humedad")), 
-  card(full_screen = TRUE, card_header("Biometría"), 
+  biometria = card(full_screen = TRUE, card_header("Biometría"), 
     plotOutput("biometria")), 
-  card(full_screen = TRUE, card_header("Mapa"), 
+  mapa = card(full_screen = TRUE, card_header("Mapa"), 
     leaflet::leafletOutput("map")),
-  card(full_screen = TRUE, card_header("Suelos"), 
+  suelos = card(full_screen = TRUE, card_header("Suelos"), 
     plotOutput("suelos")), 
-  card(full_screen = TRUE, card_header("Vecindad"), 
+  vecindad = card(full_screen = TRUE, card_header("Vecindad"), 
     plotOutput("vecindad"))
+)
+
+
+vb <- list(
+  temp_media = value_box(title = "Temperatura media del Suelo", 
+                         showcase = bsicons::bs_icon("thermometer"),
+                         value = textOutput("meanTemp"),
+                         theme_color = "secondary"), 
+  humedad_media = value_box(title = "Humedad media del Suelo", 
+                           showcase = bsicons::bs_icon("moisture"),
+                           value = textOutput("meanHumedad"),
+                           theme_color = "secondary"), 
+  abundancia_vecinos = value_box(title = "Abundancia vecinos", 
+                            showcase = bsicons::bs_icon("align-center"),
+                            value = htmlOutput("mean_vecinos_ab"),
+                            theme_color = "dark"),
+  sps_vecinos = value_box(title = "N especies vecinas", 
+                                 showcase = icon("pagelines", class = 'fa-3x'),
+                                 value = textOutput("mean_vecinos_sp"),
+                                 p(htmlOutput("lu_vecinos_sp")),
+                                 theme_color = "dark")
+
   )
+  
+  
 
 ui <- page_navbar(
   title = "Explorador fameR", 
   sidebar = upload,
-  nav_panel("Datos generales", 
-            cards[[1]]), 
-  nav_panel("Localización", 
-            cards[[4]]),
+  nav_panel("Datos generales", cards[["md"]]), 
+  nav_panel("Localización", cards[["mapa"]]),
   nav_panel("Humedad", 
             layout_columns(
               fill = FALSE, 
-              value_box(
-                title = "Temperatura media del Suelo", 
-                showcase = bsicons::bs_icon("thermometer"),
-                value = textOutput("meanTemp"),
-                theme_color = "secondary"
-              ),
-              value_box(
-                title = "Humedad media del Suelo", 
-                showcase = bsicons::bs_icon("moisture"),
-                value = textOutput("meanHumedad"),
-                theme_color = "secondary"
-              )),
-            cards[[2]]), 
-  nav_panel("Suelos", 
-            cards[[5]]), 
-  nav_panel("Biometria", 
-            cards[[3]]), 
+              vb[["temp_media"]],
+              vb[["humedad_media"]]),
+            cards[["humedad"]]), 
+  nav_panel("Suelos", cards[["suelos"]]), 
+  nav_panel("Biometria", cards[["biometria"]]), 
   nav_panel("Vecindad", 
-            cards[[6]], 
-            downloadButton("downloadVecindad", "Download Plot"))
+            layout_columns(
+             vb[["abundancia_vecinos"]],
+             vb[["sps_vecinos"]]
+            ),
+            # layout_columns(
+            #   fill = FALSE, 
+            #   vb[["humedad_media1"]],
+            #   vb[["humedad_media2"]],
+            #   vb[["humedad_media3"]]
+            #   ),
+            cards[["vecindad"]], 
+            downloadButton("downloadVecindad", "Download Plot")
+  )
 )
+
 
 server <- function(input, output, session) {
   
@@ -100,8 +125,7 @@ server <- function(input, output, session) {
   })
 
  
-  
-  
+
   # Biometry
   generateBiometriaPlot <- function(x){
     
@@ -187,7 +211,7 @@ server <- function(input, output, session) {
   
   
   # Vecindad 
-  stat_vecinos <- reactive({
+  stat_vecinos_sps <- reactive({
     neighborSpecies_stats(data()$vecindad)
     })
   
@@ -213,7 +237,7 @@ server <- function(input, output, session) {
   }
   
   output$vecindad <- renderPlot({
-    generateVecindadPlot(stat_vecinos())
+    generateVecindadPlot(stat_vecinos_sps())
   })
   
   output$downloadVecindad <- downloadHandler(
@@ -221,11 +245,74 @@ server <- function(input, output, session) {
       "vecindad_plot.png"  # Set the filename for the downloaded plot
     },
     content = function(file) {
-      g <- generateVecindadPlot(stat_vecinos())
+      g <- generateVecindadPlot(stat_vecinos_sps())
       ggsave(file, g)
     }
   )
   
+  especie_focal <- reactive({
+    data()$datos_generales |> 
+      filter(campo == "especie focal") |> 
+      dplyr::select(valor) |> 
+      pull()
+  })
+  
+  
+  
+  ### Stats Vecindad
+  stats_vecinos_ab_summ <- reactive({
+    y <- neighborAbundance_stats(data = data()$vecindad,
+                            units = "dm2", focal_sp = especie_focal())
+    y[[2]]
+  })
+
+  
+  # output$mean_vecinos_ab <- renderText({
+  #   x <- subset(stats_vecinos_ab_summ(), variable == "n_total_vecinos")
+  #   paste0(round(x$avg,2), ' ± ', round(x$se,2))
+  #  })
+  
+  output$mean_vecinos_ab <- renderUI({
+    x <- subset(stats_vecinos_ab_summ(), variable == "n_total_vecinos")
+    shiny::tagList(
+      list(
+        shiny::p(paste0(round(x$avg,2), ' ± ', round(x$se,2)), style = "font-size: 70%; text-align: center;"),
+        shiny::p(paste0(round(x$min,2), ' - ', round(x$max,2)), style = "font-size: 50%; text-align: center;")
+        )
+    )
+  })
+  
+
+  
+  
+  output$mean_vecinos_sp <- renderText({
+    x <- subset(stats_vecinos_ab_summ(), variable == "n_sps_vecinas")
+    paste0(round(x$avg,2), ' ± ', round(x$se,2))
+  })
+  
+  output$lu_vecinos_sp <- renderUI({
+    x <- subset(stats_vecinos_ab_summ(), variable == "n_sps_vecinas")
+    shiny::p(paste0(round(x$min,2), ' - ', round(x$max,2)), 
+             style = "text-align: center;")
+  })
+  
+  
+  
+  
+  
+  
+  # output$bp <- renderPlotly({
+  #   
+  #   plot_ly(data = stats_vecindad(), y = ~n_total_vecinos, 
+  #                 type = "violin", box = list(visible = TRUE), 
+  #                 points = "all", jitter = 0.2, pointpos = 0, 
+  #                 name = "") |> 
+  #     layout(
+  #       xaxis = list(title =""), 
+  #       yaxis = list(title = "Total individuos vecinos")
+  #     )
+  # })
+  # 
 
 }
 
