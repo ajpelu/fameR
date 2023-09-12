@@ -35,6 +35,8 @@ upload <- fileInput("upload",
 cards <- list(
   md = card(full_screen = TRUE, card_header("Datos generales"), 
        tableOutput("metadata")), 
+  md2 = card(full_screen = TRUE, card_header("Datos generales2"), 
+             htmlOutput("metadataText")), 
   humedad = card(full_screen = TRUE, card_header("Datos de Humedad y Temperatura del suelo"), 
        tableOutput("humedad")), 
   biometria = card(full_screen = TRUE, card_header("Biometría"), 
@@ -48,55 +50,65 @@ cards <- list(
 )
 
 
-vb <- list(
-  temp_media = value_box(title = "Temperatura media del Suelo", 
-                         showcase = bsicons::bs_icon("thermometer"),
-                         value = textOutput("meanTemp"),
-                         theme_color = "secondary"), 
-  humedad_media = value_box(title = "Humedad media del Suelo", 
-                           showcase = bsicons::bs_icon("moisture"),
-                           value = textOutput("meanHumedad"),
-                           theme_color = "secondary"), 
-  abundancia_vecinos = value_box(title = "Abundancia vecinos", 
-                            showcase = bsicons::bs_icon("align-center"),
-                            value = htmlOutput("mean_vecinos_ab"),
-                            theme_color = "dark"),
-  sps_vecinos = value_box(title = "N especies vecinas", 
-                                 showcase = icon("pagelines", class = 'fa-3x'),
-                                 value = textOutput("mean_vecinos_sp"),
-                                 p(htmlOutput("lu_vecinos_sp")),
-                                 theme_color = "dark")
 
+
+### Value box 
+# A cada vb se le llama por el nombre de la pestaña primero
+vb <- list(
+  temp_media = value_box(
+    title = "Temperatura media del Suelo",
+    showcase = bsicons::bs_icon("thermometer"),
+    value = textOutput("meanTemp"),
+    theme_color = "secondary"
+  ),
+  humedad_media = value_box(
+    title = "Humedad media del Suelo",
+    showcase = bsicons::bs_icon("moisture"),
+    value = textOutput("meanHumedad"),
+    theme_color = "secondary"
+  ),
+  vecinos_abundancia = value_box(
+    title = "Abundancia vecinos",
+    showcase = bsicons::bs_icon("align-center"),
+    value = htmlOutput("mean_vecinos_ab"),
+    theme_color = "dark"
+  ),
+  vecinos_sps = value_box(
+    title = "N especies vecinas",
+    showcase = icon("pagelines", class = "fa-3x"),
+    value = textOutput("mean_vecinos_sp"),
+    p(htmlOutput("lu_vecinos_sp")),
+    theme_color = "dark"
   )
-  
-  
+)
+
 
 ui <- page_navbar(
-  title = "Explorador fameR", 
+  title = "famExploreR",
   sidebar = upload,
-  nav_panel("Datos generales", cards[["md"]]), 
+  nav_panel("Datos generales", cards[["md"]]),
+  nav_panel("Datos generales2", cards[["md2"]]),
   nav_panel("Localización", cards[["mapa"]]),
-  nav_panel("Humedad", 
-            layout_columns(
-              fill = FALSE, 
-              vb[["temp_media"]],
-              vb[["humedad_media"]]),
-            cards[["humedad"]]), 
-  nav_panel("Suelos", cards[["suelos"]]), 
-  nav_panel("Biometria", cards[["biometria"]]), 
-  nav_panel("Vecindad", 
-            layout_columns(
-             vb[["abundancia_vecinos"]],
-             vb[["sps_vecinos"]]
-            ),
-            # layout_columns(
-            #   fill = FALSE, 
-            #   vb[["humedad_media1"]],
-            #   vb[["humedad_media2"]],
-            #   vb[["humedad_media3"]]
-            #   ),
-            cards[["vecindad"]], 
-            downloadButton("downloadVecindad", "Download Plot")
+  nav_panel(
+    "Humedad",
+    layout_columns(
+      fill = FALSE,
+      vb[["temp_media"]],
+      vb[["humedad_media"]]
+    ),
+    cards[["humedad"]]
+  ),
+  nav_panel("Suelos", cards[["suelos"]]),
+  nav_panel("Biometria", cards[["biometria"]]),
+  nav_panel(
+    "Vecindad",
+    layout_columns(
+      fill = FALSE,
+      vb[["vecinos_abundancia"]],
+      vb[["vecinos_sps"]]
+    ),
+    cards[["vecindad"]],
+    downloadButton("downloadVecindad", "Download Plot")
   )
 )
 
@@ -112,6 +124,21 @@ server <- function(input, output, session) {
     data()$datos_generales
   })
   
+  
+  output$metadataText <- renderUI({
+    x <- data()$datos_generales |> pivot_wider(names_from = campo, values_from = valor)
+    
+    shiny::tagList(
+      list(
+        shiny::h1(x$`especie focal`),
+        shiny::br(),
+        shiny::h4(paste0("Localidad: ", x$localidad)),
+        shiny::br(),
+        shiny::h5(paste0("Fecha: ", format(lubridate::ymd(x$fecha), "%Y-%d-%m")))
+      )
+    )
+    
+  })
   output$humedad <- renderTable({
     data()$humedad_temp
   })
