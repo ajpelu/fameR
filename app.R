@@ -13,6 +13,7 @@ library(lubridate)
 library(ggtern)
 library(stringr)
 library(plotly)
+library(vegan)
 
 
 
@@ -22,6 +23,8 @@ source("R/preparePopup.R")
 source("R/ternaryPlot.R")
 source("R/neighborSpecies_stats.R")
 source("R/neighborAbundance_stats.R")
+source("R/diversityCommunity.R")
+source("R/plotCommunity.R")
 
 hojas_validas <- "data/hojas_oficiales.csv" |> read.csv() |> pull()
 
@@ -46,10 +49,10 @@ cards <- list(
   suelos = card(full_screen = TRUE, card_header("Suelos"), 
     plotOutput("suelos")), 
   vecindad = card(full_screen = TRUE, card_header("Vecindad"), 
-    plotOutput("vecindad"))
+    plotOutput("vecindad")), 
+  comunidad = card(full_screen = TRUE, card_header("Comunidad"), 
+    plotlyOutput("plotcomunidad"))
 )
-
-
 
 
 ### Value box 
@@ -78,6 +81,30 @@ vb <- list(
     showcase = icon("pagelines", class = "fa-3x"),
     value = textOutput("mean_vecinos_sp"),
     p(htmlOutput("lu_vecinos_sp")),
+    theme_color = "dark"
+  ),
+  comunidad_richness = value_box(
+    title = "Riqueza de Especies",
+    showcase = icon("pagelines", class = "fa-3x"),
+    value = textOutput("richness"),
+    theme_color = "dark"
+  ), 
+  comunidad_shannon = value_box(
+    title = "Diversidad de Shannon",
+    showcase = icon("seedling", class = "fa-3x"),
+    value = textOutput("diversity_shannon"),
+    theme_color = "dark"
+  ), 
+  comunidad_simpson = value_box(
+    title = "Diversidad de Simpson",
+    showcase = icon("seedling", class = "fa-3x"),
+    value = textOutput("diversity_simpson"),
+    theme_color = "dark"
+  ), 
+  comunidad_evenness = value_box(
+    title = "Índice de Equitatividad (Pileou's)",
+    showcase = icon("leaf", class = "fa-3x"),
+    value = textOutput("evenness_pielou"),
     theme_color = "dark"
   )
 )
@@ -109,7 +136,19 @@ ui <- page_navbar(
     ),
     cards[["vecindad"]],
     downloadButton("downloadVecindad", "Download Plot")
+  ), 
+  nav_panel(
+    "Comunidad",
+    layout_columns(
+      fill = FALSE,
+      vb[["comunidad_richness"]],
+      vb[["comunidad_shannon"]], 
+      vb[["comunidad_evenness"]]
+    ),
+    cards[["comunidad"]]
+    # downloadButton("downloadVecindad", "Download Plot")
   )
+  
 )
 
 
@@ -151,7 +190,6 @@ server <- function(input, output, session) {
     mean(data()$humedad_temp$humedad, na.rm=FALSE)
   })
 
- 
 
   # Biometry
   generateBiometriaPlot <- function(x){
@@ -324,9 +362,31 @@ server <- function(input, output, session) {
   })
   
   
+  ### Comunidad
+
+  comunidad <- reactive({
+    diversityCommunity(data())
+  })
   
+  output$richness <- renderText({
+    comunidad()$richness
+  })
   
+  output$diversity_shannon <- renderText({
+    round(comunidad()$diversity_shannon, 2)
+  })
   
+  output$evenness_pielou <- renderText({
+    round(comunidad()$evenness_pielou, 3)
+  })
+  
+  output$plotcomunidad <- renderPlotly({
+    g <- plotCommunity(data())
+    
+    g$data$especie_acomp <- paste0("<i>", g$data$especie_acomp, "</i>")
+    
+    ggplotly(g, tooltip = "y")
+  })
   
   # output$bp <- renderPlotly({
   #   
