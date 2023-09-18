@@ -6,7 +6,10 @@ excrementos
 especie_focal
 herbivoria
 vecindad
-cobertura_veg
-dicc_tratamientos
+com_veg_cobertura
+com_veg_contactos
+dicc_taxon
+dicc_tratamiento
 dicc_vallado
+dicc_estado_vallado
 dicc_crs
