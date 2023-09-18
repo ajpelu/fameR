@@ -25,6 +25,7 @@ source("R/neighborSpecies_stats.R")
 source("R/neighborAbundance_stats.R")
 source("R/diversityCommunity.R")
 source("R/plotCommunity.R")
+source("R/herbivory.R")
 
 hojas_validas <- "data/hojas_oficiales.csv" |> read.csv() |> pull()
 
@@ -51,7 +52,11 @@ cards <- list(
   vecindad = card(full_screen = TRUE, card_header("Vecindad"), 
     plotOutput("vecindad")), 
   comunidad = card(full_screen = TRUE, card_header("Comunidad"), 
-    plotlyOutput("plotcomunidad"))
+    plotlyOutput("plotcomunidad")), 
+  herbivoria_plot = card(full_screen = TRUE, card_header("Gráfico"), 
+                   plotlyOutput("plotherbivoria")), 
+  herbivoria_tabla = card(full_screen = TRUE, card_header("Tabla"), 
+                          tableOutput("tablaherbivoria"))
 )
 
 
@@ -127,6 +132,10 @@ ui <- page_navbar(
   ),
   nav_panel("Suelos", cards[["suelos"]]),
   nav_panel("Biometria", cards[["biometria"]]),
+  nav_panel("Herbivoría", 
+            layout_columns(
+              tabsetPanel(cards[["herbivoria_plot"]]), 
+              tabsetPanel(cards[["herbivoria_tabla"]]))),
   nav_panel(
     "Vecindad",
     layout_columns(
@@ -382,10 +391,21 @@ server <- function(input, output, session) {
   
   output$plotcomunidad <- renderPlotly({
     g <- plotCommunity(data())
-    
     g$data$especie_acomp <- paste0("<i>", g$data$especie_acomp, "</i>")
-    
     ggplotly(g, tooltip = "y")
+  })
+  
+  herbivoria_calculos <- reactive({
+    herbivory(data()$herbivoria)
+  }) 
+  
+  # Herbivoria 
+  output$plotherbivoria <- renderPlotly({
+    ggplotly(herbivoria_calculos()$plot_damage)
+  })
+  
+  output$tablaherbivoria <- renderTable({
+    herbivoria_calculos()$damage
   })
   
   # output$bp <- renderPlotly({
