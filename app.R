@@ -26,6 +26,9 @@ source("R/neighborAbundance_stats.R")
 source("R/diversityCommunity.R")
 source("R/plotCommunity.R")
 source("R/herbivory.R")
+source("R/computeFlowering.R")
+source("R/plotFlowering.R")
+
 
 hojas_validas <- "data/hojas_oficiales.csv" |> read.csv() |> pull()
 
@@ -37,26 +40,20 @@ upload <- fileInput("upload",
                     placeholder = "Seleccione el archivo a subir")
 
 cards <- list(
-  md = card(full_screen = TRUE, card_header("Datos generales"), 
-       tableOutput("metadata")), 
-  md2 = card(full_screen = TRUE, card_header("Datos generales2"), 
-             htmlOutput("metadataText")), 
-  humedad = card(full_screen = TRUE, card_header("Datos de Humedad y Temperatura del suelo"), 
+  metadatos = card(full_screen = TRUE, htmlOutput("metadataText")), 
+  humedad = card(card_header("Datos de Humedad y Temperatura del suelo"), 
        tableOutput("humedad")), 
-  biometria = card(full_screen = TRUE, card_header("Biometría"), 
-    plotOutput("biometria")), 
-  mapa = card(full_screen = TRUE, card_header("Mapa"), 
-    leaflet::leafletOutput("map")),
-  suelos = card(full_screen = TRUE, card_header("Suelos"), 
-    plotOutput("suelos")), 
+  biometria = card(full_screen = TRUE, plotOutput("biometria")), 
+  floracion = card(full_screen = TRUE, plotlyOutput("plotfloracion")),
+  mapa = card(full_screen = TRUE, leaflet::leafletOutput("map")),
+  suelos = card(full_screen = FALSE, plotOutput("suelos")), 
   vecindad = card(full_screen = TRUE, card_header("Vecindad"), 
     plotOutput("vecindad")), 
-  comunidad = card(full_screen = TRUE, card_header("Comunidad"), 
-    plotlyOutput("plotcomunidad")), 
-  herbivoria_plot = card(full_screen = TRUE, card_header("Gráfico"), 
-                   plotlyOutput("plotherbivoria")), 
-  herbivoria_tabla = card(full_screen = TRUE, card_header("Tabla"), 
-                          tableOutput("tablaherbivoria"))
+  comunidad = card(full_screen = TRUE, 
+                   card_header("Composición de la comunidad"), 
+                   plotlyOutput("plotcomunidad")), 
+  herbivoria_plot = card(full_screen = TRUE, plotlyOutput("plotherbivoria")), 
+  herbivoria_tabla = card(full_screen = FALSE, tableOutput("tablaherbivoria"))
 )
 
 
@@ -119,16 +116,26 @@ ui <- page_navbar(
   title = "famExploreR",
   sidebar = upload,
   navset_card_tab(
-    nav_panel("Datos generales", cards[["md"]]),
-    nav_panel("Datos generales2", cards[["md2"]]),
+    nav_panel("Datos generales", cards[["metadatos"]]),
     nav_panel("Localización", cards[["mapa"]]),
-    nav_panel("Humedad",
-              layout_columns(fill = FALSE,
-                             vb[["temp_media"]],
-                             vb[["humedad_media"]]),
-              cards[["humedad"]]),
-    nav_panel("Suelos", cards[["suelos"]]),
-    nav_panel("Biometria", cards[["biometria"]]),
+    nav_menu("Suelos",
+      nav_panel("Humedad",
+                layout_columns(fill = TRUE,
+                               vb[["temp_media"]],
+                               vb[["humedad_media"]]),
+                cards[["humedad"]]),
+      nav_panel("Diagrama Ternario", cards[["suelos"]])),
+    nav_menu("Especie Focal", 
+             nav_panel("Biometria", 
+                       layout_columns(
+                         fill = TRUE,
+                         col_widths = c(-1.5, 9, -1.5),
+                         cards[["biometria"]])),
+             nav_panel("Floración / Fructificación", 
+                       layout_columns(
+                         fill = TRUE,
+                         col_widths = c(-2, 8, -2),
+                         cards[["floracion"]]))),
     nav_menu("Herbivoría",
       nav_panel("Gráfico", cards[["herbivoria_plot"]]), 
       nav_panel("Tabla", cards[["herbivoria_tabla"]])),
@@ -136,16 +143,22 @@ ui <- page_navbar(
     "Vecindad",
     layout_columns(
       fill = FALSE,
+      col_widths = c(-3, 3, 3, -3),
       vb[["vecinos_abundancia"]],
       vb[["vecinos_sps"]]
     ),
-    cards[["vecindad"]],
-    downloadButton("downloadVecindad", "Download Plot")
+    layout_columns(
+      fill = TRUE, 
+      col_widths = c(-3, 6, -3),
+      cards[["vecindad"]]),
+    layout_columns(
+      fill = FALSE, 
+      col_widths = c(-3, 6, -3),
+      downloadButton("downloadVecindad", "Download Plot"))
   ), 
   nav_panel(
     "Comunidad",
     layout_columns(
-      fill = FALSE,
       vb[["comunidad_richness"]],
       vb[["comunidad_shannon"]], 
       vb[["comunidad_evenness"]]
@@ -169,8 +182,6 @@ server <- function(input, output, session) {
     data()$datos_generales
   })
   
-
-  
   output$metadataText <- renderUI({
     x <- data()$datos_generales |> pivot_wider(names_from = campo, values_from = valor)
     
@@ -181,7 +192,8 @@ server <- function(input, output, session) {
         shiny::h4(paste0("Localidad: ", x$localidad)),
         shiny::br(),
         shiny::h5(paste0("Fecha: ", format(lubridate::ymd(x$fecha), "%Y-%d-%m"))),
-        shiny::p(HTML(paste0("<strong>Excrementos (n/m", tags$sup(2), "):</strong> ", data()$excrementos$excrementos_m2))) 
+        shiny::p(HTML(paste0("<strong>Excrementos (n/m", tags$sup(2), "):</strong> ", data()$excrementos$excrementos_m2, " (", 
+                             data()$excrementos$excrementos_n, " en ", data()$excrementos$superficie_m2, ")")))
       )
     )
     
@@ -241,6 +253,19 @@ server <- function(input, output, session) {
     generateBiometriaPlot(data())
   })
   
+  # Flowering 
+  
+  output$plotfloracion <- renderPlotly({
+    
+    s <- computeFlowering(data()$especie_focal, 
+                     var_interest = c("n_flores", "n_frutos"))
+    
+    g <- plotFlowering(s) 
+    ggplotly(g)
+  })
+  
+  
+  
   # Plot Soil ternary 
   ternary_data <- reactive({
     data()$suelo |> 
@@ -256,7 +281,7 @@ server <- function(input, output, session) {
   })
   
   
-  
+  # Map 
   leaflet_map <- reactive({
     
     coord_data <- st_transform(prepareGeo(data()$datos_generales), 4326)
@@ -423,4 +448,5 @@ server <- function(input, output, session) {
 
 }
 
-shinyApp(ui, server)
+app <- shinyApp(ui, server)
+runApp(app, launch.browser = TRUE)
