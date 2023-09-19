@@ -22,7 +22,7 @@
 #'
 #' @import dplyr tidyr ggplot2
 #' @export
-plotFlowering <- function(x, error = "se", bar_color = "blue") {
+plotFlowering <- function(x, error = "se", bar_color = "blue", ...) {
   if (error == "se") {
     plot_data <- x |>
       select(-starts_with("sd")) |>
@@ -64,7 +64,7 @@ plotFlowering <- function(x, error = "se", bar_color = "blue") {
   }
   
   p <- ggplot(plot_data, aes(x = variable, y = value)) +
-    geom_bar(stat = "identity", fill = bar_color) +
+    geom_bar(stat = "identity", fill = bar_color, width = 0.4) +
     geom_errorbar(
       data = error_data,
       aes(ymin = value - deviation, ymax = value + deviation),
