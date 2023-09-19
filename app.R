@@ -118,24 +118,20 @@ vb <- list(
 ui <- page_navbar(
   title = "famExploreR",
   sidebar = upload,
-  nav_panel("Datos generales", cards[["md"]]),
-  nav_panel("Datos generales2", cards[["md2"]]),
-  nav_panel("Localización", cards[["mapa"]]),
-  nav_panel(
-    "Humedad",
-    layout_columns(
-      fill = FALSE,
-      vb[["temp_media"]],
-      vb[["humedad_media"]]
-    ),
-    cards[["humedad"]]
-  ),
-  nav_panel("Suelos", cards[["suelos"]]),
-  nav_panel("Biometria", cards[["biometria"]]),
-  nav_panel("Herbivoría", 
-            layout_columns(
-              tabsetPanel(cards[["herbivoria_plot"]]), 
-              tabsetPanel(cards[["herbivoria_tabla"]]))),
+  navset_card_tab(
+    nav_panel("Datos generales", cards[["md"]]),
+    nav_panel("Datos generales2", cards[["md2"]]),
+    nav_panel("Localización", cards[["mapa"]]),
+    nav_panel("Humedad",
+              layout_columns(fill = FALSE,
+                             vb[["temp_media"]],
+                             vb[["humedad_media"]]),
+              cards[["humedad"]]),
+    nav_panel("Suelos", cards[["suelos"]]),
+    nav_panel("Biometria", cards[["biometria"]]),
+    nav_menu("Herbivoría",
+      nav_panel("Gráfico", cards[["herbivoria_plot"]]), 
+      nav_panel("Tabla", cards[["herbivoria_tabla"]])),
   nav_panel(
     "Vecindad",
     layout_columns(
@@ -157,7 +153,7 @@ ui <- page_navbar(
     cards[["comunidad"]]
     # downloadButton("downloadVecindad", "Download Plot")
   )
-  
+)
 )
 
 
