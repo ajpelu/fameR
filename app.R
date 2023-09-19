@@ -164,10 +164,12 @@ server <- function(input, output, session) {
     readAllsheets(upload_path = input$upload$datapath, valid_sheets = hojas_validas)
   })
   
+  
   output$metadata <- renderTable({
     data()$datos_generales
   })
   
+
   
   output$metadataText <- renderUI({
     x <- data()$datos_generales |> pivot_wider(names_from = campo, values_from = valor)
@@ -178,9 +180,11 @@ server <- function(input, output, session) {
         shiny::br(),
         shiny::h4(paste0("Localidad: ", x$localidad)),
         shiny::br(),
-        shiny::h5(paste0("Fecha: ", format(lubridate::ymd(x$fecha), "%Y-%d-%m")))
+        shiny::h5(paste0("Fecha: ", format(lubridate::ymd(x$fecha), "%Y-%d-%m"))),
+        shiny::p(HTML(paste0("<strong>Excrementos (n/m", tags$sup(2), "):</strong> ", data()$excrementos$excrementos_m2))) 
       )
     )
+    
     
   })
   output$humedad <- renderTable({
