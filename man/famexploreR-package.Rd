@@ -6,7 +6,7 @@
 \alias{famexploreR-package}
 \title{famexploreR: Exploration of Threathened Flora field data}
 \description{
-Explore Data from Threathened Flora
+A shiny app that explores data from Threathened Flora. It uses customized forms to explore the data and generate several plots, tables.
 }
 \author{
 \strong{Maintainer}: Antonio Jesús Pérez-Luque \email{ajpelu@gmail.com} (\href{https://orcid.org/0000-0002-1747-0469}{ORCID})

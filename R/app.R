@@ -19,9 +19,6 @@ library(formattable)
 
 famExmploreR_app <- function(...) { 
   
-  
-# hojas_validas <- 'data/hojas_oficiales.csv' |> read.csv() |> pull()
-# usethis::use_data(hojas_validas)
 
 hojas_validas <- hojas_validas
 

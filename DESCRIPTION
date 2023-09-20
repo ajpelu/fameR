@@ -8,7 +8,8 @@ Authors@R:
     person("Juan", "Lorite", ,"lorite@ugr", role = c("ctb"),
            comment = c(ORCID = "0000-0003-4617-8069"))
            )
-Description: Explore Data from Threathened Flora
+Description: A shiny app that explores data from Threathened Flora. It uses customized
+  forms to explore the data and generate several plots, tables. 
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
