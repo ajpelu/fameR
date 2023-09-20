@@ -271,8 +271,8 @@ server <- function(input, output, session) {
     x <- subset(stats_vecinos_ab_summ(), variable == "n_total_vecinos")
     shiny::tagList(
       list(
-        shiny::p(paste0(round(x$avg,2), ' ± ', round(x$se,2)), style = "font-size: 70%; text-align: center;"),
-        shiny::p(paste0(round(x$min,2), ' - ', round(x$max,2)), style = "font-size: 50%; text-align: center;")
+        shiny::h5(paste0(round(x$avg,2), ' ± ', round(x$se,2)), style = "font-size: 70%; text-align: center;"),
+        shiny::h5(paste0(round(x$min,2), ' - ', round(x$max,2)), style = "font-size: 50%; text-align: center;")
       )
     )
   })

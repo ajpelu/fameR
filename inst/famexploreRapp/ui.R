@@ -54,13 +54,13 @@ vb <- list(
     theme_color = "secondary"
   ),
   vecinos_abundancia = value_box(
-    title = "Abundancia vecinos",
+    title = shiny::h4("Abundancia vecinos", style = "text-align: center;"),
     showcase = bsicons::bs_icon("align-center"),
     value = htmlOutput("mean_vecinos_ab"),
     theme_color = "dark"
   ),
   vecinos_sps = value_box(
-    title = "N especies vecinas",
+    title = shiny::h4("N especies vecinas", style = "text-align: center;"),
     showcase = icon("pagelines", class = "fa-3x"),
     value = textOutput("mean_vecinos_sp"),
     p(htmlOutput("lu_vecinos_sp")),
