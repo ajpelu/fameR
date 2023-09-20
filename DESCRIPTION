@@ -28,6 +28,7 @@ Imports:
     glue,
     leaflet,
     lubridate,
+    pkgload,
     purrr,
     rcartocolor,
     readODS,

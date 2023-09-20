@@ -16,161 +16,21 @@ library(plotly)
 library(vegan)
 library(formattable)
 
-
-famexmploreR_app <- function(...) { 
-  
-
-hojas_validas <- hojas_validas
-
-cards <- list(
-  metadatos = card(full_screen = TRUE, htmlOutput("metadataText")), 
-  humedad = card(card_header("Datos de Humedad y Temperatura del suelo"), 
-                 tableOutput("humedad")), 
-  biometria = card(full_screen = TRUE, plotOutput("biometria")),
-  biometria_stats = card(full_screen = TRUE, tableOutput("biometria_stats")),
-  floracion = card(full_screen = TRUE, plotlyOutput("plotfloracion")),
-  mapa = card(full_screen = TRUE, leaflet::leafletOutput("map")),
-  suelos = card(full_screen = FALSE, plotOutput("suelos")), 
-  vecindad = card(full_screen = TRUE, card_header("Vecindad"), 
-                  plotOutput("vecindad")), 
-  comunidad = card(full_screen = TRUE, 
-                   card_header("Composición de la comunidad"), 
-                   plotlyOutput("plotcomunidad")), 
-  herbivoria_plot = card(full_screen = TRUE, plotlyOutput("plotherbivoria")), 
-  herbivoria_tabla = card(full_screen = FALSE, tableOutput("tablaherbivoria"))
-)
-
-### Value box 
-vb <- list(
-  temp_media = value_box(
-    title = "Temperatura media del Suelo",
-    showcase = bsicons::bs_icon("thermometer"),
-    value = textOutput("meanTemp"),
-    theme_color = "secondary"
-  ),
-  humedad_media = value_box(
-    title = "Humedad media del Suelo",
-    showcase = bsicons::bs_icon("moisture"),
-    value = textOutput("meanHumedad"),
-    theme_color = "secondary"
-  ),
-  vecinos_abundancia = value_box(
-    title = "Abundancia vecinos",
-    showcase = bsicons::bs_icon("align-center"),
-    value = htmlOutput("mean_vecinos_ab"),
-    theme_color = "dark"
-  ),
-  vecinos_sps = value_box(
-    title = "N especies vecinas",
-    showcase = icon("pagelines", class = "fa-3x"),
-    value = textOutput("mean_vecinos_sp"),
-    p(htmlOutput("lu_vecinos_sp")),
-    theme_color = "dark"
-  ),
-  comunidad_richness = value_box(
-    title = "Riqueza de Especies",
-    showcase = icon("pagelines", class = "fa-3x"),
-    value = textOutput("richness"),
-    theme_color = "dark"
-  ), 
-  comunidad_shannon = value_box(
-    title = "Diversidad de Shannon",
-    showcase = icon("seedling", class = "fa-3x"),
-    value = textOutput("diversity_shannon"),
-    theme_color = "dark"
-  ), 
-  comunidad_simpson = value_box(
-    title = "Diversidad de Simpson",
-    showcase = icon("seedling", class = "fa-3x"),
-    value = textOutput("diversity_simpson"),
-    theme_color = "dark"
-  ), 
-  comunidad_evenness = value_box(
-    title = "Índice de Equitatividad (Pileou's)",
-    showcase = icon("leaf", class = "fa-3x"),
-    value = textOutput("evenness_pielou"),
-    theme_color = "dark"
-  )
-)
+hojas_validas <- load("../data_shiny/hojas_validas.rda")
 
 
-ui <- page_navbar(
-  title = "famExploreR",
-  sidebar = sidebar(
-      shiny::h4("Estadillo de campo"), 
-      fileInput("upload", label = "", 
-                accept = c(".ods", ".xlsx"),
-                placeholder = "Seleccione el archivo a subir"),
-      shiny::br(), 
-      shiny::br(),
-      shiny::h4("Información espacial"),
-      fileInput(inputId = "upload_spat",
-                label = "Upload map. Choose shapefile",
-                multiple = TRUE,
-                accept = c('.shp','.dbf','.sbn','.sbx','.shx','.prj'))
-      ),
-  navset_card_tab(
-    nav_panel("Datos generales", cards[["metadatos"]]),
-    nav_panel("Localización", cards[["mapa"]]),
-    nav_menu("Suelos",
-             nav_panel("Humedad",
-                       layout_columns(fill = TRUE,
-                                      vb[["temp_media"]],
-                                      vb[["humedad_media"]]),
-                       cards[["humedad"]]),
-             nav_panel("Diagrama Ternario", cards[["suelos"]])),
-    nav_menu("Especie Focal", 
-             nav_panel("Biometria", 
-                       layout_columns(
-                         fill = TRUE,
-                         col_widths = c(-2, 8, -2),
-                         cards[["biometria"]]),
-                       layout_columns(
-                         fill = TRUE,
-                         col_widths = c(-3, 6, -3),
-                         cards[["biometria_stats"]])),
-             nav_panel("Floración / Fructificación", 
-                       layout_columns(
-                         fill = TRUE,
-                         col_widths = c(-2, 8, -2),
-                         cards[["floracion"]]))),
-    nav_menu("Herbivoría",
-             nav_panel("Gráfico", cards[["herbivoria_plot"]]), 
-             nav_panel("Tabla", cards[["herbivoria_tabla"]])),
-    nav_panel(
-      "Vecindad",
-      layout_columns(
-        fill = FALSE,
-        col_widths = c(-3, 3, 3, -3),
-        vb[["vecinos_abundancia"]],
-        vb[["vecinos_sps"]]
-      ),
-      layout_columns(
-        fill = TRUE, 
-        col_widths = c(-3, 6, -3),
-        cards[["vecindad"]]),
-      layout_columns(
-        fill = FALSE, 
-        col_widths = c(-3, 6, -3),
-        downloadButton("downloadVecindad", "Download Plot"))
-    ), 
-    nav_panel(
-      "Comunidad",
-      layout_columns(
-        fill = FALSE,
-        col_widths = c(-1,3,3,3,-2),
-        vb[["comunidad_shannon"]], 
-        vb[["comunidad_richness"]],
-        vb[["comunidad_evenness"]]
-      ),
-      layout_columns(
-        fill = FALSE, 
-        col_widths = c(-2, 8, -2),
-      cards[["comunidad"]])
-      # downloadButton("downloadVecindad", "Download Plot")
-    )
-  )
-)
+source("biometryStat.R")
+source("computeFlowering.R")
+source("diversityCommunity.R")
+source("herbivory.R")
+source("neighborAbundance_stats.R")
+source("neighborSpecies_stats.R")
+source("plotCommunity.R")
+source("plotFlowering.R")
+source("prepareGeo.R")
+source("preparePopup.R")
+source("readAllsheets.R")          
+source("ternaryPlot.R")
 
 
 server <- function(input, output, session) {
@@ -471,6 +331,4 @@ server <- function(input, output, session) {
   
 }
 
-shinyApp(ui, server, ...)
-}
 
