@@ -15,6 +15,7 @@ library(stringr)
 library(plotly)
 library(vegan)
 library(formattable)
+library(kableExtra)
 
 hojas_validas <- load("../data_shiny/hojas_validas.rda")
 
@@ -53,11 +54,25 @@ server <- function(input, output, session) {
       list(
         shiny::h1(x$`especie focal`),
         shiny::br(),
-        shiny::h4(paste0("Localidad: ", x$localidad)),
-        shiny::br(),
+        shiny::h4("Localidad"),
+        shiny::h5(paste0("Localidad: ", x$localidad)),
+        shiny::h5(paste0("Elevación: ", x$elevacion, " (m.a.s.l)")), 
+        shiny::br(), 
+        shiny::h5(paste0("Código de Población: ", x$site)), 
+        shiny::h5(paste0("Tratamiento (dentro/fuera): ", x$tratamiento)),
+        shiny::h5(paste0("Referencia: ", x$reference)),
         shiny::h5(paste0("Fecha: ", format(lubridate::ymd(x$fecha), "%Y-%d-%m"))),
-        shiny::p(HTML(paste0("<strong>Excrementos (n/m", tags$sup(2), "):</strong> ", data()$excrementos$excrementos_m2, " (", 
-                             data()$excrementos$excrementos_n, " en ", data()$excrementos$superficie_m2, ")")))
+        shiny::br(),
+        shiny::h4("Vallado"),
+        shiny::h5(paste0("Tipo: ", x$vallado_tipo)),
+        shiny::h5(paste0("Año de instalación: ", x$vallado_year)), 
+        shiny::h5(paste0("Dimensiones (perímetro): ", x$vallado_perimetro)), 
+        shiny::h5(paste0("Estado del vallado): ", x$vallado_perimetro)), 
+        shiny::br(),
+        shiny::h4("Excrementos"),
+        shiny::h5(HTML(paste0("<strong>Densidad excrementos (n/m", tags$sup(2), "):</strong> ", data()$excrementos$excrementos_m2, " (", 
+                             data()$excrementos$excrementos_n, " en ", data()$excrementos$superficie_m2, ")"))),
+        shiny::br()
       )
     )
     
@@ -145,9 +160,41 @@ server <- function(input, output, session) {
   
   output$suelos <- renderPlot({
     print(
-      ternaryPlot(ternary_data(), bsize =20,
+      ternaryPlot(ternary_data(), bsize = 20,
                   xvar = "arena", yvar = "arcilla",  zvar = "limo") 
     ) # Note that the ggtern need to be plotted in a print environment 
+  })
+  
+  
+  output$suelos_tabla <- renderTable({
+    
+    soil <- data()$suelo |> 
+      dplyr::select(-especie, -tratamiento, -referencia,
+                    -limo_g, -limo_f, -arcilla, -arena) |>
+      rename(`Carbono Orgánico (%)` = CO, 
+             `Fósforo (ppm)` = P,
+             `Materia Orgánica (%)` = MO,
+             `Nitrógeno Total (%)` = N_total,
+             `Carbono Total (%)` = C_total,
+             `Conductividad eléctrica (µS/cm)` = CE,
+             `Saturación (%)` = sat, 
+             `Fluoruros (mg/L)` = fluoruro,
+             `Cloruros (mg/L)` = cloruro,
+             `Nitratos (mg/L)` = nitrato,
+             `Nitritos (mg/L)` = nitrito,
+             `Sulfatos (mg/L)` = sulfato) |> 
+      pivot_longer(-referencia_suelo) |> 
+      mutate(value = round(value, 3)) |> 
+      rename(`Variable` = name, 
+             `Valor` = value) 
+    
+    # title_tabla_suelo <- 
+    #   paste0("Muestra: ", unique(soil$referencia_suelo)) 
+    
+    soil |> 
+      dplyr::select(-referencia_suelo) |> 
+      formattable(align = "c")
+    
   })
   
   

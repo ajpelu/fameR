@@ -18,13 +18,15 @@ library(stringr)
 library(plotly)
 library(vegan)
 library(formattable)
+library(kableExtra)
+
 
 hojas_validas <- load("../data_shiny/hojas_validas.rda")
 
 cards <- list(
   metadatos = card(full_screen = TRUE, htmlOutput("metadataText")), 
-  humedad = card(card_header("Datos de Humedad y Temperatura del suelo"), 
-                 tableOutput("humedad")), 
+  soil_parameters = card(card_header("Parámetros"), 
+                 tableOutput("suelos_tabla")), 
   biometria = card(full_screen = TRUE, plotOutput("biometria")),
   biometria_stats = card(full_screen = TRUE, tableOutput("biometria_stats")),
   floracion = card(full_screen = TRUE, plotlyOutput("plotfloracion")),
@@ -92,9 +94,10 @@ vb <- list(
   )
 )
 
+link_github <- tags$a(shiny::icon("github"), "Source code", href = "https://github.com/ajpelu/famexploreR/", target = "_blank")
 
 ui <- page_navbar(
-  title = "famExploreR",
+  title = "famExploreR v 1.0.0",
   sidebar = sidebar(
     shiny::h4("Estadillo de campo"), 
     fileInput("upload", label = "", 
@@ -104,7 +107,7 @@ ui <- page_navbar(
     shiny::br(),
     shiny::h4("Información espacial"),
     fileInput(inputId = "upload_spat",
-              label = "Upload map. Choose shapefile",
+              label = "Cargar shapefile ('.shp','.dbf','.sbn','.sbx','.shx','.prj')",
               multiple = TRUE,
               accept = c('.shp','.dbf','.sbn','.sbx','.shx','.prj'))
   ),
@@ -112,12 +115,18 @@ ui <- page_navbar(
     nav_panel("Datos generales", cards[["metadatos"]]),
     nav_panel("Localización", cards[["mapa"]]),
     nav_menu("Suelos",
-             nav_panel("Humedad",
+             nav_panel("Parámetros",
                        layout_columns(fill = TRUE,
+                                      col_widths = c(-2, 4, 4, -2),
                                       vb[["temp_media"]],
                                       vb[["humedad_media"]]),
-                       cards[["humedad"]]),
-             nav_panel("Diagrama Ternario", cards[["suelos"]])),
+                       layout_columns(fill = TRUE,
+                                      col_widths = c(-2, 8, -2),
+                                      cards[["soil_parameters"]])),
+             nav_panel("Diagrama Ternario", 
+                       layout_columns(fill = TRUE,
+                                      col_widths = c(-2, 8, -2),
+                                      cards[["suelos"]]))),
     nav_menu("Especie Focal", 
              nav_panel("Biometria", 
                        layout_columns(
@@ -172,6 +181,12 @@ ui <- page_navbar(
         col_widths = c(-2, 8, -2),
         cards[["comunidad"]])
       # downloadButton("downloadVecindad", "Download Plot")
-    )
+    ) 
+  ),
+  nav_spacer(),
+  nav_menu(
+    title = "About",
+    align = "right",
+    nav_item(link_github)
   )
 )
