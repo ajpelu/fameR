@@ -17,7 +17,7 @@ library(vegan)
 library(formattable)
 
 
-famExmploreR_app <- function(...) { 
+famexmploreR_app <- function(...) { 
   
 
 hojas_validas <- hojas_validas
