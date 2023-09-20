@@ -277,19 +277,24 @@ server <- function(input, output, session) {
     )
   })
   
-  
-  
-  
-  output$mean_vecinos_sp <- renderText({
+
+  output$mean_vecinos_sp <- renderUI({
     x <- subset(stats_vecinos_ab_summ(), variable == "n_sps_vecinas")
-    paste0(round(x$avg,2), ' ± ', round(x$se,2))
+    
+    shiny::tagList(
+      list(
+        shiny::h5(paste0(round(x$avg,2), ' ± ', round(x$se,2)), style = "font-size: 70%; text-align: center;"),
+        shiny::h5(paste0(round(x$min,2), ' - ', round(x$max,2)), style = "font-size: 50%; text-align: center;")
+      )
+    )
+#     paste0(round(x$avg,2), ' ± ', round(x$se,2))
   })
   
-  output$lu_vecinos_sp <- renderUI({
-    x <- subset(stats_vecinos_ab_summ(), variable == "n_sps_vecinas")
-    shiny::p(paste0(round(x$min,2), ' - ', round(x$max,2)), 
-             style = "text-align: center;")
-  })
+  # output$lu_vecinos_sp <- renderUI({
+  #   x <- subset(stats_vecinos_ab_summ(), variable == "n_sps_vecinas")
+  #   shiny::p(paste0(round(x$min,2), ' - ', round(x$max,2)), 
+  #            style = "text-align: center;")
+  # })
   
   
   ### Comunidad
@@ -325,8 +330,20 @@ server <- function(input, output, session) {
     ggplotly(herbivoria_calculos()$plot_damage)
   })
   
-  output$tablaherbivoria <- renderTable({
-    herbivoria_calculos()$damage
+  output$tablaherbivoria <- renderFormattable({
+    herbivoria_calculos()$damage |> 
+      dplyr::mutate(across(c(mean_damage, sd_damage, se_damage), ~ round(.x, 2))) |> 
+      dplyr::mutate_all(.funs = ~ tidyr::replace_na(as.character(.x), "")) |> 
+      rename(
+        `Individuo` = id_individuo, 
+        `% Hojas Dañadas` = leaf_damages_pct, 
+        `% Daño (media)` = mean_damage,
+        `% Daño (sd)` = sd_damage,
+        `% Daño (se)` = se_damage) |> 
+      formattable(
+        list(`% Hojas Dañadas` = color_bar("lightgreen"),
+             `% Daño (media)` = color_bar("lightblue"))) 
+    
   })
   
 }

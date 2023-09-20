@@ -36,7 +36,7 @@ cards <- list(
                    card_header("Composición de la comunidad"), 
                    plotlyOutput("plotcomunidad")), 
   herbivoria_plot = card(full_screen = TRUE, plotlyOutput("plotherbivoria")), 
-  herbivoria_tabla = card(full_screen = FALSE, tableOutput("tablaherbivoria"))
+  herbivoria_tabla = card(full_screen = FALSE, formattableOutput("tablaherbivoria"))
 )
 
 ### Value box 
@@ -54,16 +54,16 @@ vb <- list(
     theme_color = "secondary"
   ),
   vecinos_abundancia = value_box(
-    title = shiny::h4("Abundancia vecinos", style = "text-align: center;"),
+    title = shiny::h3("Abundancia vecinos", style = "text-align: center;"),
     showcase = bsicons::bs_icon("align-center"),
     value = htmlOutput("mean_vecinos_ab"),
     theme_color = "dark"
   ),
   vecinos_sps = value_box(
-    title = shiny::h4("N especies vecinas", style = "text-align: center;"),
+    title = shiny::h3("N especies vecinas", style = "text-align: center;"),
     showcase = icon("pagelines", class = "fa-3x"),
-    value = textOutput("mean_vecinos_sp"),
-    p(htmlOutput("lu_vecinos_sp")),
+    value = htmlOutput("mean_vecinos_sp"),
+    # p(htmlOutput("lu_vecinos_sp")),
     theme_color = "dark"
   ),
   comunidad_richness = value_box(
@@ -135,7 +135,12 @@ ui <- page_navbar(
                          cards[["floracion"]]))),
     nav_menu("Herbivoría",
              nav_panel("Gráfico", cards[["herbivoria_plot"]]), 
-             nav_panel("Tabla", cards[["herbivoria_tabla"]])),
+             nav_panel("Tabla",
+                       fill = FALSE,
+                       layout_columns(
+                         col_widths = c(-4, 4, -4),
+                         cards[["herbivoria_tabla"]])
+                       )),
     nav_panel(
       "Vecindad",
       layout_columns(
