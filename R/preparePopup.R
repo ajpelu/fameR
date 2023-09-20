@@ -3,7 +3,7 @@
 #' This function takes a tibble `x` and a vector of field names `mdfields` as 
 #' input and prepares an HTML popup content based on the specified fields. 
 #'
-#' @param x A tibble containing data with columns "campo" and "valor".
+#' @param x A tibble containing data with columns 'campo' and 'valor'.
 #' @param mdfields A vector of field names specifying which fields to include in 
 #' the popup content.
 #'

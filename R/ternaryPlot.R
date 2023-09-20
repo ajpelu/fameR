@@ -19,8 +19,6 @@
 #' variable name for use in the axis labels. You can adjust the base font size 
 #' (`bsize`) for the plot to control the text size.
 #'
-#' 
-#'
 #' @seealso \code{\link{ggtern}} for more information on creating ternary plots using ggtern.
 #'
 #' @examples
@@ -32,8 +30,9 @@
 #'   limo = c(0.3, 0.3, 0.4, 0.1)
 #' )
 #' 
-#' generateTernaryPlot(data, xvar = "arena", yvar = "arcilla", 
-#' zvar = "limo")
+#' generateTernaryPlot(data, xvar = 'arena', yvar = 'arcilla', 
+#' zvar = 'limo')
+#' }
 #'
 #'
 #' @import ggtern

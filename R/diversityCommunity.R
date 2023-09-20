@@ -8,10 +8,8 @@
 #' @return A data frame with diversity indices for plant communities.
 #'
 #' @details The function first extracts the method used for data collection from 
-#' the "datos_generales" data frame. Based on the method, it selects the 
+#' the 'datos_generales' data frame. Based on the method, it selects the 
 #' corresponding plant community data frame and calculates various diversity indices.
-#'
-#' @seealso \code{\link{vegan::diversity}}, \code{\link{vegan::specnumber}}
 #'
 #' @export
 

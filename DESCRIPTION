@@ -1,0 +1,41 @@
+Package: famexploreR
+Title: Exploration of Threathened Flora field data
+Version: 0.0.0.9000
+Authors@R: 
+  c(
+    person("Antonio Jesús", "Pérez-Luque", , "ajpelu@gmail.com", role = c("cre", "aut"),
+           comment = c(ORCID = "0000-0002-1747-0469")),
+    person("Juan", "Lorite", ,"lorite@ugr", role = c("ctb"),
+           comment = c(ORCID = "0000-0003-4617-8069"))
+           )
+Description: Explore Data from Threathened Flora
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Depends: 
+    R (>= 2.10)
+LazyData: true
+Imports: 
+    bsicons,
+    dplyr,
+    forcats,
+    ggdist,
+    gghalves,
+    ggplot2,
+    ggtern,
+    glue,
+    leaflet,
+    lubridate,
+    purrr,
+    rcartocolor,
+    readODS,
+    readxl,
+    rlang,
+    sf,
+    shiny,
+    stats,
+    stringr,
+    tibble,
+    tidyr,
+    vegan

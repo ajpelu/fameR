@@ -16,21 +16,14 @@ library(plotly)
 library(vegan)
 library(formattable)
 
-source("R/readAllsheets.R")
-source("R/prepareGeo.R")
-source("R/preparePopup.R")
-source("R/ternaryPlot.R")
-source("R/neighborSpecies_stats.R")
-source("R/neighborAbundance_stats.R")
-source("R/diversityCommunity.R")
-source("R/plotCommunity.R")
-source("R/herbivory.R")
-source("R/computeFlowering.R")
-source("R/plotFlowering.R")
-source("R/biometryStat.R") 
 
-hojas_validas <- "data/hojas_oficiales.csv" |> read.csv() |> pull()
+famExmploreR_app <- function(...) { 
+  
+  
+# hojas_validas <- 'data/hojas_oficiales.csv' |> read.csv() |> pull()
+# usethis::use_data(hojas_validas)
 
+hojas_validas <- hojas_validas
 
 cards <- list(
   metadatos = card(full_screen = TRUE, htmlOutput("metadataText")), 
@@ -49,7 +42,6 @@ cards <- list(
   herbivoria_plot = card(full_screen = TRUE, plotlyOutput("plotherbivoria")), 
   herbivoria_tabla = card(full_screen = FALSE, tableOutput("tablaherbivoria"))
 )
-
 
 ### Value box 
 vb <- list(
@@ -480,20 +472,8 @@ server <- function(input, output, session) {
     herbivoria_calculos()$damage
   })
   
-  # output$bp <- renderPlotly({
-  #   
-  #   plot_ly(data = stats_vecindad(), y = ~n_total_vecinos, 
-  #                 type = "violin", box = list(visible = TRUE), 
-  #                 points = "all", jitter = 0.2, pointpos = 0, 
-  #                 name = "") |> 
-  #     layout(
-  #       xaxis = list(title =""), 
-  #       yaxis = list(title = "Total individuos vecinos")
-  #     )
-  # })
-  # 
-  
 }
 
-app <- shinyApp(ui, server)
-runApp(app, launch.browser = TRUE)
+shinyApp(ui, server, ...)
+}
+

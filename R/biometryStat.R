@@ -5,7 +5,7 @@
 #'
 #' @param x A data frame containing biometric data.
 #' @param variables A character vector specifying the names of the biometric variables
-#'   for which statistics will be calculated. Default is c("altura_cm", "dmayor_cm", "dmenor_cm").
+#'   for which statistics will be calculated. Default is c('altura_cm', 'dmayor_cm', 'dmenor_cm').
 #'
 #' @return A data frame with columns for each statistic (mean, sd, se, min, max) and a
 #'   corresponding variable column.

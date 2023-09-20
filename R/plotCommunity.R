@@ -4,15 +4,14 @@
 #' the specified method.
 #'
 #' @param x A list containing data frames for different aspects of the study.
+#' @param ... others ggplot parameters 
 #'
 #' @return A bar plot visualizing plant community data.
 #'
 #' @details The function first extracts the method used for data collection from 
-#' the "datos_generales" data frame. Based on the method, it selects the 
+#' the 'datos_generales' data frame. Based on the method, it selects the 
 #' corresponding plant community data frame and creates a bar plot to visualize
 #' the coverage of plant species.
-#'
-#' @seealso \code{\link{ggplot2::ggplot}}, \code{\link{ggplot2::geom_bar}}
 #'
 #' @export
 

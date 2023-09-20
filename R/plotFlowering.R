@@ -8,15 +8,9 @@
 #' @param error The type of error bars to use. Should be "se" (standard error) or
 #'   "sd" (standard deviation). Default is "se".
 #' @param bar_color The color for the bars in the plot. Default is "blue".
+#' @param ... others ggplot parameters 
 #'
 #' @return A ggplot2 object representing the bar plot with error bars.
-#'
-#' @examples
-#' # Generate a plot with standard error bars
-#' plotFlowering(my_data, error = "se")
-#'
-#' # Generate a plot with standard deviation error bars
-#' plotFlowering(my_data, error = "sd")
 #'
 #' @seealso \code{\link{ggplot2}}, \code{\link{geom_bar}}, \code{\link{geom_errorbar}}
 #'

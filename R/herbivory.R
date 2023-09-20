@@ -5,9 +5,9 @@
 #'
 #' @param data A data frame containing the herbivory data with columns including
 #'   'comido_pct', 'id_individuo', and other relevant variables.
-#' @param bar_color The color for the bar in the ggplot. Default is "blue".
-#' @param point_fill The fill color for points in the ggplot. Default is "green".
-#' @param point_color The outline color for points in the ggplot. Default is "black".
+#' @param bar_color The color for the bar in the ggplot. Default is blue.
+#' @param point_fill The fill color for points in the ggplot. Default is green.
+#' @param point_color The outline color for points in the ggplot. Default is black.
 #' @param point_alpha The alpha (transparency) for points in the ggplot. Default is 0.9.
 #'
 #' @return A list containing:
