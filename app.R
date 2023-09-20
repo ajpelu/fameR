@@ -14,8 +14,7 @@ library(ggtern)
 library(stringr)
 library(plotly)
 library(vegan)
-
-
+library(formattable)
 
 source("R/readAllsheets.R")
 source("R/prepareGeo.R")
@@ -28,27 +27,22 @@ source("R/plotCommunity.R")
 source("R/herbivory.R")
 source("R/computeFlowering.R")
 source("R/plotFlowering.R")
-
+source("R/biometryStat.R") 
 
 hojas_validas <- "data/hojas_oficiales.csv" |> read.csv() |> pull()
 
 
-# Sidebar upload 
-upload <- fileInput("upload", 
-                    label = "Subir la ficha de campo", 
-                    accept = c(".ods", ".xlsx"),
-                    placeholder = "Seleccione el archivo a subir")
-
 cards <- list(
   metadatos = card(full_screen = TRUE, htmlOutput("metadataText")), 
   humedad = card(card_header("Datos de Humedad y Temperatura del suelo"), 
-       tableOutput("humedad")), 
-  biometria = card(full_screen = TRUE, plotOutput("biometria")), 
+                 tableOutput("humedad")), 
+  biometria = card(full_screen = TRUE, plotOutput("biometria")),
+  biometria_stats = card(full_screen = TRUE, tableOutput("biometria_stats")),
   floracion = card(full_screen = TRUE, plotlyOutput("plotfloracion")),
   mapa = card(full_screen = TRUE, leaflet::leafletOutput("map")),
   suelos = card(full_screen = FALSE, plotOutput("suelos")), 
   vecindad = card(full_screen = TRUE, card_header("Vecindad"), 
-    plotOutput("vecindad")), 
+                  plotOutput("vecindad")), 
   comunidad = card(full_screen = TRUE, 
                    card_header("Composición de la comunidad"), 
                    plotlyOutput("plotcomunidad")), 
@@ -58,7 +52,6 @@ cards <- list(
 
 
 ### Value box 
-# A cada vb se le llama por el nombre de la pestaña primero
 vb <- list(
   temp_media = value_box(
     title = "Temperatura media del Suelo",
@@ -114,59 +107,80 @@ vb <- list(
 
 ui <- page_navbar(
   title = "famExploreR",
-  sidebar = upload,
+  sidebar = sidebar(
+      shiny::h4("Estadillo de campo"), 
+      fileInput("upload", label = "", 
+                accept = c(".ods", ".xlsx"),
+                placeholder = "Seleccione el archivo a subir"),
+      shiny::br(), 
+      shiny::br(),
+      shiny::h4("Información espacial"),
+      fileInput(inputId = "upload_spat",
+                label = "Upload map. Choose shapefile",
+                multiple = TRUE,
+                accept = c('.shp','.dbf','.sbn','.sbx','.shx','.prj'))
+      ),
   navset_card_tab(
     nav_panel("Datos generales", cards[["metadatos"]]),
     nav_panel("Localización", cards[["mapa"]]),
     nav_menu("Suelos",
-      nav_panel("Humedad",
-                layout_columns(fill = TRUE,
-                               vb[["temp_media"]],
-                               vb[["humedad_media"]]),
-                cards[["humedad"]]),
-      nav_panel("Diagrama Ternario", cards[["suelos"]])),
+             nav_panel("Humedad",
+                       layout_columns(fill = TRUE,
+                                      vb[["temp_media"]],
+                                      vb[["humedad_media"]]),
+                       cards[["humedad"]]),
+             nav_panel("Diagrama Ternario", cards[["suelos"]])),
     nav_menu("Especie Focal", 
              nav_panel("Biometria", 
                        layout_columns(
                          fill = TRUE,
-                         col_widths = c(-1.5, 9, -1.5),
-                         cards[["biometria"]])),
+                         col_widths = c(-2, 8, -2),
+                         cards[["biometria"]]),
+                       layout_columns(
+                         fill = TRUE,
+                         col_widths = c(-3, 6, -3),
+                         cards[["biometria_stats"]])),
              nav_panel("Floración / Fructificación", 
                        layout_columns(
                          fill = TRUE,
                          col_widths = c(-2, 8, -2),
                          cards[["floracion"]]))),
     nav_menu("Herbivoría",
-      nav_panel("Gráfico", cards[["herbivoria_plot"]]), 
-      nav_panel("Tabla", cards[["herbivoria_tabla"]])),
-  nav_panel(
-    "Vecindad",
-    layout_columns(
-      fill = FALSE,
-      col_widths = c(-3, 3, 3, -3),
-      vb[["vecinos_abundancia"]],
-      vb[["vecinos_sps"]]
-    ),
-    layout_columns(
-      fill = TRUE, 
-      col_widths = c(-3, 6, -3),
-      cards[["vecindad"]]),
-    layout_columns(
-      fill = FALSE, 
-      col_widths = c(-3, 6, -3),
-      downloadButton("downloadVecindad", "Download Plot"))
-  ), 
-  nav_panel(
-    "Comunidad",
-    layout_columns(
-      vb[["comunidad_richness"]],
-      vb[["comunidad_shannon"]], 
-      vb[["comunidad_evenness"]]
-    ),
-    cards[["comunidad"]]
-    # downloadButton("downloadVecindad", "Download Plot")
+             nav_panel("Gráfico", cards[["herbivoria_plot"]]), 
+             nav_panel("Tabla", cards[["herbivoria_tabla"]])),
+    nav_panel(
+      "Vecindad",
+      layout_columns(
+        fill = FALSE,
+        col_widths = c(-3, 3, 3, -3),
+        vb[["vecinos_abundancia"]],
+        vb[["vecinos_sps"]]
+      ),
+      layout_columns(
+        fill = TRUE, 
+        col_widths = c(-3, 6, -3),
+        cards[["vecindad"]]),
+      layout_columns(
+        fill = FALSE, 
+        col_widths = c(-3, 6, -3),
+        downloadButton("downloadVecindad", "Download Plot"))
+    ), 
+    nav_panel(
+      "Comunidad",
+      layout_columns(
+        fill = FALSE,
+        col_widths = c(-1,3,3,3,-2),
+        vb[["comunidad_shannon"]], 
+        vb[["comunidad_richness"]],
+        vb[["comunidad_evenness"]]
+      ),
+      layout_columns(
+        fill = FALSE, 
+        col_widths = c(-2, 8, -2),
+      cards[["comunidad"]])
+      # downloadButton("downloadVecindad", "Download Plot")
+    )
   )
-)
 )
 
 
@@ -178,6 +192,7 @@ server <- function(input, output, session) {
   })
   
   
+
   output$metadata <- renderTable({
     data()$datos_generales
   })
@@ -205,13 +220,13 @@ server <- function(input, output, session) {
   
   output$meanTemp <- renderText({
     mean(data()$humedad_temp$temperatura, na.rm=FALSE)
-    })
+  })
   
   output$meanHumedad <- renderText({
     mean(data()$humedad_temp$humedad, na.rm=FALSE)
   })
-
-
+  
+  
   # Biometry
   generateBiometriaPlot <- function(x){
     
@@ -253,12 +268,18 @@ server <- function(input, output, session) {
     generateBiometriaPlot(data())
   })
   
-  # Flowering 
   
+  output$biometria_stats <- renderTable({
+    biometryStat(data()$especie_focal) |> 
+      mutate(across(c(mean, sd, se), ~ round(.x, digits = 2))) |> 
+      formattable()
+  })
+  
+  # Flowering 
   output$plotfloracion <- renderPlotly({
     
     s <- computeFlowering(data()$especie_focal, 
-                     var_interest = c("n_flores", "n_frutos"))
+                          var_interest = c("n_flores", "n_frutos"))
     
     g <- plotFlowering(s) 
     ggplotly(g)
@@ -282,37 +303,63 @@ server <- function(input, output, session) {
   
   
   # Map 
-  leaflet_map <- reactive({
-    
+  initial_map <- reactive({
+    req(input$upload)
     coord_data <- st_transform(prepareGeo(data()$datos_generales), 4326)
-    custom_popup <- suppressWarnings(preparePopup(data()$datos_generales)) 
-  
-    leaflet_map <- leaflet::leaflet(data = coord_data) |> 
+    custom_popup <- suppressWarnings(preparePopup(data()$datos_generales))
+    
+    leaflet::leaflet(data = coord_data) |> 
       addProviderEspTiles("IGNBase.Gris", group = "Base") |> 
       addProviderEspTiles("MTN", group = "MTN") |> 
       addProviderEspTiles("LiDAR", group = "LIDAR") |> 
       addProviderEspTiles('MDT.CurvasNivel', group = "Curvas de Nivel") |>
       addProviderTiles('Esri.WorldImagery', group = "Ortofoto") |> 
-      leaflet::addMarkers(
-        popup = custom_popup
-      ) |> 
+      leaflet::addMarkers(popup = custom_popup) |> 
       addLayersControl(
         baseGroups = c("Base", "LIDAR", "Curvas de Nivel", "MTN", "Ortofoto"),
-        options = layersControlOptions(collapsed = FALSE)
-      )
-    
+        options = layersControlOptions(collapsed = FALSE))
+    })
+
+  
+  # Define an eventReactive to handle shapefile upload
+  updated_map <- eventReactive(input$upload_spat, {
+  
+      shpdf <- input$upload_spat
+      tempdirname <- dirname(shpdf$datapath[1])
+      
+      # Rename files
+      for (i in 1:nrow(shpdf)) {
+        file.rename(
+          shpdf$datapath[i],
+          paste0(tempdirname, "/", shpdf$name[i])
+        )
+      }
+      
+      # Read the shapefile
+      geo <- sf::st_read(paste(tempdirname, shpdf$name[grep(pattern = "*.shp$", shpdf$name)], sep = "/"))
+      geo <- sf::st_transform(geo, 4326)
+      
+      # Add the shapefile to the existing Leaflet map
+      m <- initial_map() |> 
+        addPolygons(data = geo,
+                    fillColor = "blue",  # Customize fill color and other options
+                    color = "black",
+                    weight = 1,
+                    opacity = 1,
+                    fillOpacity = 0.2)
     })
   
+  
+  # Use the shapefileUpload eventReactive result to update the Leaflet map
   output$map <- leaflet::renderLeaflet({
-    req(leaflet_map())
-    map <- leaflet_map()
+    if (!is.null(updated_map())) {updated_map() } else {initial_map()}
   })
   
-  
+
   # Vecindad 
   stat_vecinos_sps <- reactive({
     neighborSpecies_stats(data()$vecindad)
-    })
+  })
   
   generateVecindadPlot <- function(x){
     ggplot(x, aes(x = especie_vecina, y = ab_mean)) +
@@ -361,10 +408,10 @@ server <- function(input, output, session) {
   ### Stats Vecindad
   stats_vecinos_ab_summ <- reactive({
     y <- neighborAbundance_stats(data = data()$vecindad,
-                            units = "dm2", focal_sp = especie_focal())
+                                 units = "dm2", focal_sp = especie_focal())
     y[[2]]
   })
-
+  
   
   # output$mean_vecinos_ab <- renderText({
   #   x <- subset(stats_vecinos_ab_summ(), variable == "n_total_vecinos")
@@ -377,11 +424,11 @@ server <- function(input, output, session) {
       list(
         shiny::p(paste0(round(x$avg,2), ' ± ', round(x$se,2)), style = "font-size: 70%; text-align: center;"),
         shiny::p(paste0(round(x$min,2), ' - ', round(x$max,2)), style = "font-size: 50%; text-align: center;")
-        )
+      )
     )
   })
   
-
+  
   
   
   output$mean_vecinos_sp <- renderText({
@@ -397,7 +444,7 @@ server <- function(input, output, session) {
   
   
   ### Comunidad
-
+  
   comunidad <- reactive({
     diversityCommunity(data())
   })
@@ -445,7 +492,7 @@ server <- function(input, output, session) {
   #     )
   # })
   # 
-
+  
 }
 
 app <- shinyApp(ui, server)
