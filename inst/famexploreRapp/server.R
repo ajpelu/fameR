@@ -194,23 +194,30 @@ server <- function(input, output, session) {
   ternary_data <- reactive({
     data()$suelo |> 
       na.omit() |> 
-      dplyr::select(limo_g, limo_f, arcilla, arena) |> 
+      dplyr::select(limo_g, limo_f, arcilla, arena, referencia_suelo) |> 
       mutate(limo = sum(c_across(starts_with("limo"))))
   })
   
   output$suelos <- renderPlot({
     print(
-      ternaryPlot(ternary_data(), bsize = 20,
+      ternaryPlot(ternary_data(), bsize = 20, point_size = 5,
                   xvar = "arena", yvar = "arcilla",  zvar = "limo") 
     ) # Note that the ggtern need to be plotted in a print environment 
   })
   
-  
-  output$suelos_tabla <- renderTable({
-    
-    soil <- data()$suelo |> 
-      dplyr::select(-especie, -tratamiento, -referencia,
-                    -limo_g, -limo_f, -arcilla, -arena) |>
+  summarize_suelo <- function(x){
+    results <- x |> 
+      na.omit() |> 
+      dplyr::select(-code_especie, -tratamiento, -referencia,
+                    -limo_g, -limo_f, -arcilla, -arena, 
+                    -referencia_suelo) |>
+      summarize(across(everything(), 
+                       list(mean = ~mean(., na.rm = TRUE), 
+                            sd = ~sd(., na.rm = TRUE), 
+                            se = ~{sd(., na.rm = TRUE)/sqrt(length(.))} ))) |> 
+      pivot_longer(cols = everything(), 
+                   names_to = c(".value", "parameter"), 
+                   names_pattern = "(.*)_(mean|sd|se)") |> 
       rename(`Carbono Orgánico (%)` = CO, 
              `Fósforo (ppm)` = P,
              `Materia Orgánica (%)` = MO,
@@ -223,18 +230,21 @@ server <- function(input, output, session) {
              `Nitratos (mg/L)` = nitrato,
              `Nitritos (mg/L)` = nitrito,
              `Sulfatos (mg/L)` = sulfato) |> 
-      pivot_longer(-referencia_suelo) |> 
-      mutate(value = round(value, 3)) |> 
-      rename(`Variable` = name, 
-             `Valor` = value) 
+      pivot_longer(cols = -parameter, names_to = "Variable") |> 
+      pivot_wider(names_from = parameter, values_from = value) |> 
+      dplyr::rename(`Media` = mean) |> 
+      mutate(across(where(is.numeric), ~ round(., 3)))
+    return(results)
+  }
+  
+  
+  
+  output$suelos_tabla <- renderTable({
     
-    # title_tabla_suelo <- 
-    #   paste0("Muestra: ", unique(soil$referencia_suelo)) 
-    
-    soil |> 
-      dplyr::select(-referencia_suelo) |> 
-      formattable(align = "c")
-    
+    summarize_suelo(data()$suelo) |> 
+      dplyr::filter(if_any(everything(), ~ !all(is.na(.)))) |> 
+      dplyr::mutate_all(.funs = ~ tidyr::replace_na(as.character(.x), "")) |>
+      formattable()
   })
   
   
