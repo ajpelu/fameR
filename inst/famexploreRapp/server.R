@@ -193,6 +193,7 @@ server <- function(input, output, session) {
   # Plot Soil ternary 
   ternary_data <- reactive({
     data()$suelo |> 
+      na.omit() |> 
       dplyr::select(limo_g, limo_f, arcilla, arena) |> 
       mutate(limo = sum(c_across(starts_with("limo"))))
   })
