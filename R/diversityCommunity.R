@@ -34,22 +34,22 @@ diversityCommunity <- function(x) {
   }
   
   # Prepare data 
-  m <- comunidad  |>
-    select(referencia, especie_acomp, cobertura)  |>
-    pivot_wider(names_from = especie_acomp, values_from = cobertura)  |>
-    select(-referencia)
+  m <- comunidad |>
+    na.omit() |> 
+    dplyr::select(referencia, especie_acomp, cobertura)  |>
+    pivot_wider(names_from = especie_acomp, values_from = cobertura)  
   
   # Caompute diversity indices 
-  div_h <- vegan::diversity(m, index = "shannon")
-  richness <- vegan::specnumber(m)
-  div_simpson <- vegan::diversity(m, index = "simpson")
+  div_h <- vegan::diversity(m[-1], index = "shannon")
+  richness <- vegan::specnumber(m[-1])
+  div_simpson <- vegan::diversity(m[-1], index = "simpson")
   
   # Calcular la equidad de Pielou
   evenness <- div_h / log(richness)
   
   # Crear un data frame con los resultados
   out <- data.frame(
-    referencia = unique(comunidad$referencia),
+    referencia = unique(m$referencia),
     diversity_shannon = div_h,
     richness = richness,
     diversity_simpson = div_simpson,
