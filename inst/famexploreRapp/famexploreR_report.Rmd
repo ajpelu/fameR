@@ -1,8 +1,12 @@
 ---
 title: "Informe famexploreR"
-output: pdf_document 
+output: 
+  word_document
+always_allow_html: true
 params:
   data: NULL
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -26,6 +30,7 @@ library(vegan)
 library(formattable)
 library(kableExtra)
 library(famexploreR)
+library(flextable)
 ```
 
 # Datos generales 
@@ -62,8 +67,8 @@ Se tomaron diferentes muestras (*n=* `r n_temp_humedad`) de temperatura y humeda
 
 ```{r}
 temp_humedad |> 
-  kbl() |> 
-  kable_styling()
+  mutate(across(is.numeric, ~round(., 2))) |> 
+           flextable() |> set_table_properties(layout = "autofit")
 ```
 
 ## Parámetros fisico-químicos
@@ -71,10 +76,11 @@ Se tomaron `r n_temp_humedad` muestras de suelo y se obtuvieron los siguientes v
 
 ```{r}
 famexploreR::summarizeSoil(data$suelo) |> 
-      dplyr::filter(if_any(everything(), ~ !all(is.na(.)))) |> 
-      dplyr::mutate_all(.funs = ~ tidyr::replace_na(as.character(.x), "")) |>
-    kbl() |> 
-  kable_styling()
+  dplyr::filter(if_any(everything(), ~ !all(is.na(.)))) |> 
+  dplyr::mutate_all(.funs = ~ tidyr::replace_na(as.character(.x), "")) |>
+  dplyr::mutate(across(is.numeric, ~round(., 2))) |> 
+  flextable() |> 
+  set_table_properties(layout = "autofit")
 ```
 
 
@@ -91,13 +97,125 @@ ternary_data <- data$suelo |> na.omit() |>
   dplyr::select(limo_g, limo_f, arcilla, arena, referencia_suelo) |> 
   mutate(limo = sum(c_across(starts_with("limo"))))
   
-famexploreR::ternaryPlot(ternary_data, bsize = 20, point_size = 5,
+famexploreR::ternaryPlot(ternary_data, bsize = 14, point_size = 3,
                   xvar = "arena", yvar = "arcilla",  zvar = "limo") 
   
 ```
 
+# Especie focal
+
+```{r}
+n_datos_biometricos <- data$especie_focal |> na.omit() |> nrow()
+```
+
+Se estudiaron `r n_datos_biometricos` individuos de la especie focal. 
+
+## Datos biométricos
+A continuación se muestran los valores medios de los parámetros biométricos de la población estudiada.  
+
+```{r}
+biometria <- biometryStat(data$especie_focal) |> 
+      mutate(across(c(mean, sd, se), ~ round(.x, digits = 2))) 
+
+biometria |> 
+  flextable() |> 
+  set_table_properties(layout = "autofit")
+
+```
+
+La disttibución de los datos se muestra en el siguiente gráfico: 
+
+```{r}
+biometryPlot(data, base_size = 12, axis_text_size = 12)
+```
+
+## Fructificación / Floración 
+
+```{r}
+s <- computeFlowering(data$especie_focal, var_interest = c("n_flores", "n_frutos"))
+flor <- s |> filter(variable == "n_flores") 
+fruto <- s |> filter(variable == "n_frutos")
+```
+
+De los `r n_datos_biometricos` individuos estudiados, se han observado un total de `r s |> summarise(sum(n_ind)) |> pull()` individuos reproductores (en flor y/o en fruto). Un `r round(flor$pct_ind, 2)` % de los individuos presentaban flores con un promedio de `r flor$mean_count` flores por individuo; mientras un `r round(fruto$pct_ind, 2)` % de individuos presentaron un promedio de `r fruto$mean_count`. 
+
+En el siguiente gráfico podemos observar dichos datos: 
+
+```{r}
+plotFlowering(s)
+```
+
+## Daños por Herbivoría. 
+```{r}
+ex <- data$excrementos
+```
+
+En la evaluación de la presencia de herbívoros se han observado un total de `r ex$excrementos_n` grupos de excrementos en `r ex$superficie_m2` m^2, lo que supone una densidad de `r ex$excrementos_m2`. 
+
+```{r}
+herb <- data$herbivoria
+
+n_ind_herb <- length(unique(herb$id_individuo))
+n_hojas <- length(unique(herb$hoja))
+```
+
+```{r}
+h <- herbivory(data$herbivoria)
+```
+
+Para determinar el daño por herbivoría, se analizaron `r n_hojas` hojas para cada individuo estudiado (un total de `r n_ind_herb` individuos). Se observaron daños en `r h$damage |> filter(leaf_damages_pct > 0) |> nrow()` individuos, con el `r h$damage |> filter(leaf_damages_pct > 0) |> summarise(mean = mean(leaf_damages_pct)) |> pull()` % de sus hojas dañadas. El promedio observado de daño es del `r h$damage |> filter(leaf_damages_pct > 0) |> summarise(mean = mean(mean_damage))`. 
+
+En el siguiente gráfico podemos observar mejor estos datos. 
+
+```{r}
+h$plot_damage + theme(legend.position = "bottom")
+```
+
+# Comunidad vegetal 
+
+```{r}
+comunidad <- diversityCommunity(data)
+```
+
+La comunidad vegetal en la que se observó la especie focal, cuenta con un total de `r comunidad$richness`, siendo sus valores de diversidad de Shannon de `r round(comunidad$diversity_shannon, 2)` y de Simpson de `r round(comunidad$diversity_simpson, 2)`. El índice de equitatividad (Pielou) es de `r round(comunidad$evenness_pielou, 3)`
+
+En el siguiente gráfico observamos las coberturas por especie de la comunidad: 
+```{r}
+plotCommunity(data, axis_text_size = 8, axis_title_size = 10)
+```
+
+## Especies vecinas
+```{r}
+ef <- data$datos_generales |> filter(campo == "especie focal") |> 
+      dplyr::select(valor) |> 
+      pull()
+
+especie_focal <- data$dicc_taxon |> 
+  filter(scientificname == ef) |> 
+  dplyr::select(withoutautorship) |> 
+  pull()
+
+vec <- data$vecindad |> na.omit() 
+
+y <- neighborAbundance_stats(data = vec,
+                        units = "cm2", focal_sp = especie_focal)
+
+n_total_vecinos <- subset(y[[2]], variable == "n_total_vecinos")
+n_sps_vecinas  <- subset(y[[2]], variable == "n_sps_vecinas")
 
 
+
+```
+
+Se ha estudiado el número y la identidad de las especies vecinas a la especie focal en un plot circular de `r unique(vec$diam_muestreo_vecindad_cm)` cm de diámetro. Se han observado un total de `r length(unique(vec$especie_vecina))` especies, cuyas abundancias promedio se observan en el siguiente gráfico: 
+
+```{r}
+x <- data$vecindad |> na.omit() |> neighborSpecies_stats() 
+vecindadPlot(x, axis_text_size = 8, axis_title_size = 10)
+```
+
+
+El número de vecinos varió entre `r n_total_vecinos$min` y `r n_total_vecinos$max` con un promedio de `r round(n_total_vecinos$avg, 2)` individuos. Mientras que el número de especies vecinas varió entre `r n_sps_vecinas$min` y `r n_sps_vecinas$max` con un promedio de `r round(n_sps_vecinas$avg, 2)`. 
 
 
 

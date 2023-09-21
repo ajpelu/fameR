@@ -5,6 +5,7 @@
 #' for a specific species.
 #'
 #' @param x A data frame containing biometric measurements for a species.
+#' @param base_size The base_size for the plot 
 #'
 #' @return A biometry plot visualizing height, major diameter, and minor diameter.
 #'
@@ -26,7 +27,7 @@
 #' @importFrom rcartocolor carto_pal
 #'
 #' @export
-biometryPlot <- function(x){
+biometryPlot <- function(x, base_size, axis_text_size = 24, ...){
   
   nombre_variables <- c(
     altura_cm = "Altura", 
@@ -45,7 +46,7 @@ biometryPlot <- function(x){
     scale_fill_manual(values = my_pal, guide = "none") + 
     geom_boxplot( width = .2, fill = "white", size = 1.5, outlier.shape = NA) +
     theme(
-      axis.text = element_text(size = 24)) + 
+      axis.text = element_text(size = axis_text_size)) + 
     ggdist::stat_halfeye(
       adjust = .33, ## bandwidth
       width = .67, 
@@ -57,7 +58,7 @@ biometryPlot <- function(x){
       range_scale = .3, 
       alpha = .5, size = 3
     ) + coord_flip() +
-    theme_minimal(base_size = 20) +
+    theme_minimal(base_size = base_size) +
     xlab("") + ylab("")
   
 }

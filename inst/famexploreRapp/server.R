@@ -31,9 +31,9 @@ source("plotCommunity.R")
 source("plotFlowering.R")
 source("prepareGeo.R")
 source("preparePopup.R")
-source("readAllsheets.R")          
-source("ternaryPlot.R")
+source("readAllsheets.R")
 source("summarizeSoil.R")
+source("ternaryPlot.R")
 source("vecindadPlot.R")
 
 
@@ -136,7 +136,7 @@ server <- function(input, output, session) {
   # Biometry
   
   output$biometria <- renderPlot({
-    biometryPlot(data())
+    biometryPlot(data(), base_size = 20)
   })
   
   
@@ -258,10 +258,16 @@ server <- function(input, output, session) {
   )
   
   especie_focal <- reactive({
-    data()$datos_generales |> 
+    ef <- data()$datos_generales |> 
       filter(campo == "especie focal") |> 
       dplyr::select(valor) |> 
       pull()
+    
+    data()$dicc_taxon |> 
+      filter(scientificname == ef) |> 
+      dplyr::select(withoutautorship) |> 
+      pull()
+    
   })
   
   
@@ -359,6 +365,22 @@ server <- function(input, output, session) {
              `% Daño (media)` = color_bar("lightblue"))) 
     
   })
+  
+
+  output$generateReport <- downloadHandler(
+    filename = function() {
+      "famexploreR_report.docx"  # Set the filename for the downloadedreport
+    },
+    content = function(file) {
+      # Define parameters to be passed to the Rmd file
+      params <- list(data = data())  
+      
+      rmarkdown::render("famexploreR_report.Rmd", 
+                        output_file = file, 
+                        params = params,
+                        envir = new.env(parent = globalenv()))
+    }
+  )
   
 }
 

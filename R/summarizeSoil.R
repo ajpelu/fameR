@@ -19,6 +19,7 @@
 #' @import dplyr
 #' @import tidyr
 #' @export
+#' 
 summarizeSoil <- function(x){
   results <- x |> 
     na.omit() |> 

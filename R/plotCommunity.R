@@ -15,7 +15,9 @@
 #'
 #' @export
 
-plotCommunity <- function(x, ...) { 
+plotCommunity <- function(x, 
+                          axis_text_size = 16, 
+                          axis_title_size = 17, ...) { 
   
   # Extract the method from general data
   metodo <- x$datos_generales |> 
@@ -48,7 +50,7 @@ plotCommunity <- function(x, ...) {
     theme(axis.text.y = element_text(face = "italic")) + 
     coord_flip() +
     theme(
-      axis.text = element_text(size = 16), 
-      axis.title = element_text(size = 17)
+      axis.text = element_text(size = axis_text_size), 
+      axis.title = element_text(size = axis_title_size)
     ) 
 } 
