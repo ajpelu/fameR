@@ -57,17 +57,17 @@ plotFlowering <- function(x, error = "se", bar_color = "blue", ...) {
     stop("Invalid 'error' argument. Use 'se' or 'sd'.")
   }
   
-  p <- ggplot(plot_data, aes(x = variable, y = value)) +
-    geom_bar(stat = "identity", fill = bar_color, width = 0.4) +
-    geom_errorbar(
+  p <- ggplot::ggplot(plot_data, aes(x = variable, y = value)) +
+    ggplot::geom_bar(stat = "identity", fill = bar_color, width = 0.4) +
+    ggplot::geom_errorbar(
       data = error_data,
       aes(ymin = value - deviation, ymax = value + deviation),
       width = 0.2, colour = bar_color, position = "identity", show.legend = FALSE
     ) +
-    facet_wrap(~nameF, ncol = 1, scales = "free_y") +
-    theme_minimal() +
-    ylab("") +
-    xlab("")
+    ggplot::facet_wrap(~nameF, ncol = 1, scales = "free_y") +
+    ggplot::theme_minimal() +
+    ggplot::ylab("") +
+    ggplot::xlab("")
   
   return(p)
 }

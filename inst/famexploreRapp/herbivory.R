@@ -32,13 +32,13 @@ herbivory <- function(data, bar_color = "blue", point_fill = "green", point_colo
     mutate(id_individuo = as.factor(id_individuo))
   
   # Create the ggplot
-  plot_damage <- ggplot(damage, aes(x = id_individuo)) +
-    geom_bar(stat = "identity", aes(y = mean_damage), fill = bar_color) +
-    geom_errorbar(aes(ymin = mean_damage - sd_damage, ymax = mean_damage + sd_damage), width = 0.2, colour = bar_color) +
-    geom_point(aes(y = -1, size = leaf_damages_pct), shape = 21, color = point_color, fill = point_fill, alpha = point_alpha) +
-    labs(x = "Individuo id", y = "Daño medio de las hojas comidas (%) ") +
-    scale_size_continuous(range = c(2, 10), name = "% hojas comidas") +
-    theme_minimal()
+  plot_damage <- ggplot::ggplot(damage, aes(x = id_individuo)) +
+    ggplot::geom_bar(stat = "identity", aes(y = mean_damage), fill = bar_color) +
+    ggplot::geom_errorbar(aes(ymin = mean_damage - sd_damage, ymax = mean_damage + sd_damage), width = 0.2, colour = bar_color) +
+    ggplot::geom_point(aes(y = -1, size = leaf_damages_pct), shape = 21, color = point_color, fill = point_fill, alpha = point_alpha) +
+    ggplot::labs(x = "Individuo id", y = "Daño medio de las hojas comidas (%) ") +
+    ggplot::scale_size_continuous(range = c(2, 10), name = "% hojas comidas") +
+    ggplot::theme_minimal()
   
   results <- list(
     "damage" = damage,

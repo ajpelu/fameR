@@ -18,6 +18,8 @@ ternaryPlot(data, xvar, yvar, zvar, bsize, point_size, ...)
 \item{bsize}{The base font size for the plot.}
 
 \item{point_size}{The size of the points.}
+
+\item{...}{others ggplot parameters}
 }
 \value{
 A ggtern plot object displaying the ternary plot.

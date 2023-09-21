@@ -10,6 +10,10 @@ biometryPlot(x, base_size, axis_text_size = 24, ...)
 \item{x}{A data frame containing biometric measurements for a species.}
 
 \item{base_size}{The base_size for the plot}
+
+\item{axis_text_size}{The size of the axis text}
+
+\item{...}{others ggplot parameters}
 }
 \value{
 A biometry plot visualizing height, major diameter, and minor diameter.

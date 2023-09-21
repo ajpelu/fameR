@@ -48,17 +48,17 @@ ternaryPlot <- function(data, xvar, yvar, zvar, bsize, point_size, ...) {
   zvar_label <- str_to_title(zvar)
   
   # Create the ternary plot
-  plot <- ggtern(data = data, aes_string(x = xvar, y = yvar, z = zvar)) +
-    geom_crosshair_tern(colour = "gray") +
-    geom_point(size = point_size) +
-    labs(
+  plot <- ggtern::ggtern(data = data, aes_string(x = xvar, y = yvar, z = zvar)) +
+    ggtern::geom_crosshair_tern(colour = "gray") +
+    ggplot::geom_point(size = point_size) +
+    ggplot::labs(
       yarrow = paste(yvar_label, " (%)"),
       zarrow = paste(zvar_label, " (%)"),
       xarrow = paste(xvar_label, " (%)")
     ) +
-    xlab("") + ylab("") + zlab("") +
-    theme_showarrows() +
-    theme_bvbw(base_size = bsize)
+    ggplot::xlab("") + ggplot::ylab("") + ggtern::zlab("") +
+    ggtern::theme_showarrows() +
+    ggtern::theme_bvbw(base_size = bsize)
   
   return(plot)
 }

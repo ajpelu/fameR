@@ -13,6 +13,12 @@ vecindadPlot(x, axis_text_size = 16, axis_title_size = 17, ...)
 \item \code{ab_mean}: The mean abundance of the neighboring species.
 \item \code{ab_se}: The standard error of the mean abundance.
 }}
+
+\item{axis_text_size}{The size of the axis text. Default value=16}
+
+\item{axis_title_size}{The size of the axis title. Default value=17}
+
+\item{...}{others ggplot parameters}
 }
 \value{
 A bar plot with error bars.

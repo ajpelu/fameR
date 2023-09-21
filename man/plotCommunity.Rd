@@ -9,6 +9,10 @@ plotCommunity(x, axis_text_size = 16, axis_title_size = 17, ...)
 \arguments{
 \item{x}{A list containing data frames for different aspects of the study.}
 
+\item{axis_text_size}{The size of the axis text. Default value=16}
+
+\item{axis_title_size}{The size of the axis title. Default value=17}
+
 \item{...}{others ggplot parameters}
 }
 \value{

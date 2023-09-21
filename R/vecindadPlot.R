@@ -20,19 +20,19 @@
 vecindadPlot <- function(x, 
                          axis_text_size = 16, 
                          axis_title_size = 17, ...){
-  g <- ggplot(x, aes(x = especie_vecina, y = ab_mean)) +
-    geom_bar(stat = "identity", fill = "blue") +
-    geom_errorbar(aes(ymin = ab_mean - ab_se, 
+  g <- ggplot::ggplot(x, aes(x = especie_vecina, y = ab_mean)) +
+    ggplot::geom_bar(stat = "identity", fill = "blue") +
+    ggplot::geom_errorbar(aes(ymin = ab_mean - ab_se, 
                       ymax = ab_mean + ab_se),
                   width = 0.25, 
                   position = position_dodge(width = 0.9), 
                   colour = "blue") +
-    labs(x = "Especie Vecina",
+    ggplot::labs(x = "Especie Vecina",
          y = "Abundancia (n. ind)") +
-    theme_minimal() + 
-    theme(axis.text.y = element_text(face = "italic")) + 
-    coord_flip() +
-    theme(
+    ggplot::theme_minimal() + 
+    ggplot::coord_flip() +
+    ggplot::theme(
+      axis.text.y = element_text(face = "italic"),
       axis.text = element_text(size = axis_text_size), 
       axis.title = element_text(size = axis_title_size)
     ) 
