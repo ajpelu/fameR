@@ -18,6 +18,7 @@ library(tidyverse)
 library(purrr)
 library(rcartocolor)
 library(ggdist)
+library(ggplot2)
 library(gghalves)
 library(sf)
 library(mapSpain)
@@ -82,9 +83,6 @@ famexploreR::summarizeSoil(data$suelo) |>
   flextable() |> 
   set_table_properties(layout = "autofit")
 ```
-
-
-
 
 
 ## Diagrama Ternario de Suelos 
