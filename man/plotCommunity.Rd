@@ -4,7 +4,7 @@
 \alias{plotCommunity}
 \title{Plot Plant Community Data}
 \usage{
-plotCommunity(x, ...)
+plotCommunity(x, axis_text_size = 16, axis_title_size = 17, ...)
 }
 \arguments{
 \item{x}{A list containing data frames for different aspects of the study.}

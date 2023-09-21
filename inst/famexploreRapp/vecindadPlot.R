@@ -7,6 +7,10 @@
 #'   - `especie_vecina`: The neighboring species.
 #'   - `ab_mean`: The mean abundance of the neighboring species.
 #'   - `ab_se`: The standard error of the mean abundance.
+#' @param ... others ggplot parameters
+#' @param axis_text_size The size of the axis text. Default value=16
+#' @param axis_title_size The size of the axis title. Default value=17
+#' 
 #'
 #' @return A bar plot with error bars.
 #'
@@ -16,7 +20,7 @@
 vecindadPlot <- function(x, 
                          axis_text_size = 16, 
                          axis_title_size = 17, ...){
- g <- ggplot(x, aes(x = especie_vecina, y = ab_mean)) +
+  g <- ggplot(x, aes(x = especie_vecina, y = ab_mean)) +
     geom_bar(stat = "identity", fill = "blue") +
     geom_errorbar(aes(ymin = ab_mean - ab_se, 
                       ymax = ab_mean + ab_se),
@@ -28,11 +32,11 @@ vecindadPlot <- function(x,
     theme_minimal() + 
     theme(axis.text.y = element_text(face = "italic")) + 
     coord_flip() +
-   theme(
-     axis.text = element_text(size = axis_text_size), 
-     axis.title = element_text(size = axis_title_size)
-   ) 
+    theme(
+      axis.text = element_text(size = axis_text_size), 
+      axis.title = element_text(size = axis_title_size)
+    ) 
   
- return(g)
+  return(g)
   
 }

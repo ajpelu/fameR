@@ -15,11 +15,9 @@ Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Depends: 
-    R (>= 4.0),
-    ggdist
+    R (>= 4.0)
 LazyData: true
 Imports: 
-    bsicons,
     dplyr,
     forcats,
     ggdist,
@@ -27,9 +25,7 @@ Imports:
     ggplot2,
     ggtern,
     glue,
-    leaflet,
     lubridate,
-    pkgload,
     purrr,
     rcartocolor,
     readODS,

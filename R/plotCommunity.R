@@ -5,6 +5,8 @@
 #'
 #' @param x A list containing data frames for different aspects of the study.
 #' @param ... others ggplot parameters 
+#' @param axis_text_size The size of the axis text. Default value=16
+#' @param axis_title_size The size of the axis title. Default value=17
 #'
 #' @return A bar plot visualizing plant community data.
 #'

@@ -7,6 +7,10 @@
 #'   - `especie_vecina`: The neighboring species.
 #'   - `ab_mean`: The mean abundance of the neighboring species.
 #'   - `ab_se`: The standard error of the mean abundance.
+#' @param ... others ggplot parameters
+#' @param axis_text_size The size of the axis text. Default value=16
+#' @param axis_title_size The size of the axis title. Default value=17
+#' 
 #'
 #' @return A bar plot with error bars.
 #'

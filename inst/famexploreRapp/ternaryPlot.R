@@ -10,6 +10,7 @@
 #' @param zvar The name of the variable to be plotted in the z-axis of the ternary plot.
 #' @param bsize The base font size for the plot.
 #' @param point_size The size of the points.
+#' @param ... others ggplot parameters
 #'
 #' @return A ggtern plot object displaying the ternary plot.
 #'

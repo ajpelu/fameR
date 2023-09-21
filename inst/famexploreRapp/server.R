@@ -16,6 +16,7 @@ library(plotly)
 library(vegan)
 library(formattable)
 library(kableExtra)
+library(flextable)
 
 hojas_validas <- load("../data_shiny/hojas_validas.rda")
 

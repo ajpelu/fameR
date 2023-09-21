@@ -6,6 +6,8 @@
 #'
 #' @param x A data frame containing biometric measurements for a species.
 #' @param base_size The base_size for the plot 
+#' @param axis_text_size The size of the axis text
+#' @param ... others ggplot parameters 
 #'
 #' @return A biometry plot visualizing height, major diameter, and minor diameter.
 #'

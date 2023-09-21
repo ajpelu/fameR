@@ -4,10 +4,12 @@
 \alias{biometryPlot}
 \title{Create Biometry Plot}
 \usage{
-biometryPlot(x)
+biometryPlot(x, base_size, axis_text_size = 24, ...)
 }
 \arguments{
 \item{x}{A data frame containing biometric measurements for a species.}
+
+\item{base_size}{The base_size for the plot}
 }
 \value{
 A biometry plot visualizing height, major diameter, and minor diameter.

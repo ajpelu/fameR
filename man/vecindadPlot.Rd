@@ -4,7 +4,7 @@
 \alias{vecindadPlot}
 \title{Generate Vecindad Plot}
 \usage{
-vecindadPlot(x, ...)
+vecindadPlot(x, axis_text_size = 16, axis_title_size = 17, ...)
 }
 \arguments{
 \item{x}{A data frame containing data for plotting.
