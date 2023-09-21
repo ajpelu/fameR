@@ -109,7 +109,13 @@ ui <- page_navbar(
     fileInput(inputId = "upload_spat",
               label = "Cargar shapefile ('.shp','.dbf','.sbn','.sbx','.shx','.prj')",
               multiple = TRUE,
-              accept = c('.shp','.dbf','.sbn','.sbx','.shx','.prj'))
+              accept = c('.shp','.dbf','.sbn','.sbx','.shx','.prj')),
+    shiny::br(), 
+    shiny::br(),
+    shiny::br(), 
+    shiny::br(),
+    downloadButton("generateReport", "Generar Informe")
+    
   ),
   navset_card_tab(
     nav_panel("Datos generales", cards[["metadatos"]]),

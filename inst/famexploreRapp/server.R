@@ -21,6 +21,7 @@ hojas_validas <- load("../data_shiny/hojas_validas.rda")
 
 
 source("biometryStat.R")
+source("biometryPlot.R")
 source("computeFlowering.R")
 source("diversityCommunity.R")
 source("herbivory.R")
@@ -32,6 +33,8 @@ source("prepareGeo.R")
 source("preparePopup.R")
 source("readAllsheets.R")          
 source("ternaryPlot.R")
+source("summarizeSoil.R")
+source("vecindadPlot.R")
 
 
 server <- function(input, output, session) {
@@ -131,44 +134,9 @@ server <- function(input, output, session) {
   # 
   
   # Biometry
-  generateBiometriaPlot <- function(x){
-    
-    nombre_variables <- c(
-      altura_cm = "Altura", 
-      dmayor_cm = "Diámetro mayor",
-      dmenor_cm = "Diámetro menor")
-    
-    biometry <- x$especie_focal |> 
-      dplyr::select(especie:id_individuo, altura_cm, dmayor_cm, dmenor_cm) |> 
-      pivot_longer(cols = c(altura_cm, dmayor_cm, dmenor_cm)) |> 
-      mutate(name = recode(name, !!!nombre_variables))
-    
-    my_pal <- rcartocolor::carto_pal(n = 8, name = "Bold")[c(1, 3, 7, 2)]
-    
-    ggplot(biometry, aes(x = as.factor(name), y = value, color = name, fill = name)) +
-      scale_color_manual(values = my_pal, guide = "none") +
-      scale_fill_manual(values = my_pal, guide = "none") + 
-      geom_boxplot( width = .2, fill = "white", size = 1.5, outlier.shape = NA) +
-      theme(
-        axis.text = element_text(size = 24)) + 
-      ggdist::stat_halfeye(
-        adjust = .33, ## bandwidth
-        width = .67, 
-        color = NA, ## remove slab interval
-        position = position_nudge(x = .15)
-      ) +
-      gghalves::geom_half_point(
-        side = "l", 
-        range_scale = .3, 
-        alpha = .5, size = 3
-      ) + coord_flip() +
-      theme_minimal(base_size = 20) +
-      xlab("") + ylab("")
-    
-  }
   
   output$biometria <- renderPlot({
-    generateBiometriaPlot(data())
+    biometryPlot(data())
   })
   
   
@@ -205,43 +173,9 @@ server <- function(input, output, session) {
     ) # Note that the ggtern need to be plotted in a print environment 
   })
   
-  summarize_suelo <- function(x){
-    results <- x |> 
-      na.omit() |> 
-      dplyr::select(-code_especie, -tratamiento, -referencia,
-                    -limo_g, -limo_f, -arcilla, -arena, 
-                    -referencia_suelo) |>
-      summarize(across(everything(), 
-                       list(mean = ~mean(., na.rm = TRUE), 
-                            sd = ~sd(., na.rm = TRUE), 
-                            se = ~{sd(., na.rm = TRUE)/sqrt(length(.))} ))) |> 
-      pivot_longer(cols = everything(), 
-                   names_to = c(".value", "parameter"), 
-                   names_pattern = "(.*)_(mean|sd|se)") |> 
-      rename(`Carbono Orgánico (%)` = CO, 
-             `Fósforo (ppm)` = P,
-             `Materia Orgánica (%)` = MO,
-             `Nitrógeno Total (%)` = N_total,
-             `Carbono Total (%)` = C_total,
-             `Conductividad eléctrica (µS/cm)` = CE,
-             `Saturación (%)` = sat, 
-             `Fluoruros (mg/L)` = fluoruro,
-             `Cloruros (mg/L)` = cloruro,
-             `Nitratos (mg/L)` = nitrato,
-             `Nitritos (mg/L)` = nitrito,
-             `Sulfatos (mg/L)` = sulfato) |> 
-      pivot_longer(cols = -parameter, names_to = "Variable") |> 
-      pivot_wider(names_from = parameter, values_from = value) |> 
-      dplyr::rename(`Media` = mean) |> 
-      mutate(across(where(is.numeric), ~ round(., 3)))
-    return(results)
-  }
-  
-  
-  
   output$suelos_tabla <- renderTable({
     
-    summarize_suelo(data()$suelo) |> 
+    summarizeSoil(data()$suelo) |> 
       dplyr::filter(if_any(everything(), ~ !all(is.na(.)))) |> 
       dplyr::mutate_all(.funs = ~ tidyr::replace_na(as.character(.x), "")) |>
       formattable()
@@ -304,32 +238,13 @@ server <- function(input, output, session) {
 
   # Vecindad 
   stat_vecinos_sps <- reactive({
-    neighborSpecies_stats(data()$vecindad)
+    x <- data()$vecindad |> na.omit()
+    neighborSpecies_stats(x)
   })
   
-  generateVecindadPlot <- function(x){
-    ggplot(x, aes(x = especie_vecina, y = ab_mean)) +
-      geom_bar(stat = "identity", fill = "blue") +
-      geom_errorbar(aes(ymin = ab_mean - ab_se, 
-                        ymax = ab_mean + ab_se),
-                    width = 0.25, 
-                    position = position_dodge(width = 0.9), 
-                    colour = "blue") +
-      labs(x = "Especie Vecina",
-           y = "Abundancia (n. ind)") +
-      theme_minimal() + 
-      theme(axis.text.y = element_text(face = "italic")) + 
-      coord_flip() +
-      theme(
-        axis.text = element_text(size = 16), 
-        axis.title = element_text(size = 17)
-      ) 
-    
-    
-  }
   
   output$vecindad <- renderPlot({
-    generateVecindadPlot(stat_vecinos_sps())
+    vecindadPlot(stat_vecinos_sps())
   })
   
   output$downloadVecindad <- downloadHandler(
@@ -353,7 +268,9 @@ server <- function(input, output, session) {
   
   ### Stats Vecindad
   stats_vecinos_ab_summ <- reactive({
-    y <- neighborAbundance_stats(data = data()$vecindad,
+    d <- data()$vecindad |> na.omit()
+    
+    y <- neighborAbundance_stats(data = d,
                                  units = "dm2", focal_sp = especie_focal())
     y[[2]]
   })

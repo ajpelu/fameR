@@ -38,6 +38,7 @@
 #'
 #' @import ggtern
 #' @importFrom stringr str_to_title
+#' @export
 #'
 ternaryPlot <- function(data, xvar, yvar, zvar, bsize, point_size, ...) {
   # Capitalize the first letter of variable names for axis labels

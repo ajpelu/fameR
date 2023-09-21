@@ -1,0 +1,103 @@
+---
+title: "Informe famexploreR"
+output: pdf_document 
+params:
+  data: NULL
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(shiny)
+library(bslib)
+library(bsicons)
+library(tidyverse)
+library(purrr)
+library(rcartocolor)
+library(ggdist)
+library(gghalves)
+library(sf)
+library(mapSpain)
+library(leaflet)
+library(lubridate)
+library(ggtern)
+library(stringr)
+library(plotly)
+library(vegan)
+library(formattable)
+library(kableExtra)
+library(famexploreR)
+```
+
+# Datos generales 
+```{r}
+data <- params$data 
+
+md <- data$datos_generales |> 
+  pivot_wider(names_from = campo, 
+              values_from = valor)
+```
+
+Las especie de estudio es `r md$'especie focal'`. Se ha visitado la localidad `r md$localidad`, situada a `r md$elevacion` (*m.s.n.m.*) en las coordenadas x: `r md$coord_x`, e y: `r md$coord_y`. La visita se realizó en la fecha `r format(lubridate::ymd(md$fecha), "%Y-%d-%m")`, y el código de la visita es: `r md$reference`. 
+
+# Suelos 
+## Temperatura y Humedad del suelo.
+
+```{r}
+n_temp_humedad <- data$humedad_temp |> na.omit() |> nrow()
+
+temp_humedad <-  
+    data$humedad_temp |> 
+      na.omit() |> 
+      dplyr::select(referencia, temperatura, humedad) |> 
+      pivot_longer(-referencia) |> 
+      group_by(name) |> 
+      summarise(mean = mean(value, na.rm = FALSE), 
+                sd = sd(value, na.rm = FALSE),
+                se = sd/sqrt(length(value)), 
+                min = min(value, na.rm = FALSE),
+                max = max(value, na.rm = FALSE))
+```
+
+Se tomaron diferentes muestras (*n=* `r n_temp_humedad`) de temperatura y humedad del suelo y se obtuvieron los siguientes valores medios: 
+
+```{r}
+temp_humedad |> 
+  kbl() |> 
+  kable_styling()
+```
+
+## Parámetros fisico-químicos
+Se tomaron `r n_temp_humedad` muestras de suelo y se obtuvieron los siguientes valores medios: 
+
+```{r}
+famexploreR::summarizeSoil(data$suelo) |> 
+      dplyr::filter(if_any(everything(), ~ !all(is.na(.)))) |> 
+      dplyr::mutate_all(.funs = ~ tidyr::replace_na(as.character(.x), "")) |>
+    kbl() |> 
+  kable_styling()
+```
+
+
+
+
+
+## Diagrama Ternario de Suelos 
+En la siguiente figura se muestra el diagrama ternario de las muestras de suelo
+
+```{r}
+n_suelo <- data$suelo |> na.omit() |> nrow() 
+
+ternary_data <- data$suelo |> na.omit() |> 
+  dplyr::select(limo_g, limo_f, arcilla, arena, referencia_suelo) |> 
+  mutate(limo = sum(c_across(starts_with("limo"))))
+  
+famexploreR::ternaryPlot(ternary_data, bsize = 20, point_size = 5,
+                  xvar = "arena", yvar = "arcilla",  zvar = "limo") 
+  
+```
+
+
+
+
+
+

@@ -37,7 +37,8 @@ plotCommunity <- function(x, ...) {
   
   # Prepare data
   m <- comunidad  |>
-    select(referencia, especie_acomp, cobertura) 
+    select(referencia, especie_acomp, cobertura) |> 
+    na.omit()
   
   ggplot(m, aes(x = forcats::fct_rev(especie_acomp), y = cobertura)) +
     geom_bar(stat = "identity", fill = "blue") +

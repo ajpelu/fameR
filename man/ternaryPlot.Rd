@@ -4,7 +4,7 @@
 \alias{ternaryPlot}
 \title{Generate a Ternary Plot with Customizable Axis Labels}
 \usage{
-ternaryPlot(data, xvar, yvar, zvar, bsize)
+ternaryPlot(data, xvar, yvar, zvar, bsize, point_size, ...)
 }
 \arguments{
 \item{data}{A data frame containing the data to be plotted.}
@@ -16,6 +16,8 @@ ternaryPlot(data, xvar, yvar, zvar, bsize)
 \item{zvar}{The name of the variable to be plotted in the z-axis of the ternary plot.}
 
 \item{bsize}{The base font size for the plot.}
+
+\item{point_size}{The size of the points.}
 }
 \value{
 A ggtern plot object displaying the ternary plot.
