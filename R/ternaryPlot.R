@@ -9,6 +9,7 @@
 #' @param yvar The name of the variable to be plotted in the y-axis of the ternary plot.
 #' @param zvar The name of the variable to be plotted in the z-axis of the ternary plot.
 #' @param bsize The base font size for the plot.
+#' @param point_size The size of the points.
 #'
 #' @return A ggtern plot object displaying the ternary plot.
 #'
@@ -38,7 +39,7 @@
 #' @import ggtern
 #' @importFrom stringr str_to_title
 #'
-ternaryPlot <- function(data, xvar, yvar, zvar, bsize) {
+ternaryPlot <- function(data, xvar, yvar, zvar, bsize, point_size, ...) {
   # Capitalize the first letter of variable names for axis labels
   xvar_label <- str_to_title(xvar)
   yvar_label <- str_to_title(yvar)
@@ -47,7 +48,7 @@ ternaryPlot <- function(data, xvar, yvar, zvar, bsize) {
   # Create the ternary plot
   plot <- ggtern(data = data, aes_string(x = xvar, y = yvar, z = zvar)) +
     geom_crosshair_tern(colour = "gray") +
-    geom_point(size = 2) +
+    geom_point(size = point_size) +
     labs(
       yarrow = paste(yvar_label, " (%)"),
       zarrow = paste(zvar_label, " (%)"),
