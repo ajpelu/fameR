@@ -44,14 +44,14 @@ plotCommunity <- function(x,
     select(referencia, especie_acomp, cobertura) |> 
     na.omit()
   
-  ggplot::ggplot(m, aes(x = forcats::fct_rev(especie_acomp), y = cobertura)) +
-    ggplot::geom_bar(stat = "identity", fill = "blue") +
-    ggplot::labs(x = "Especie",
+  ggplot2::ggplot(m, aes(x = forcats::fct_rev(especie_acomp), y = cobertura)) +
+    ggplot2::geom_bar(stat = "identity", fill = "blue") +
+    ggplot2::labs(x = "Especie",
          y = "Cobertura (%)") +
-    ggplot::theme_minimal() + 
-    ggplot::theme(axis.text.y = element_text(face = "italic")) + 
-    ggplot::coord_flip() +
-    ggplot::theme(
+    ggplot2::theme_minimal() + 
+    ggplot2::theme(axis.text.y = element_text(face = "italic")) + 
+    ggplot2::coord_flip() +
+    ggplot2::theme(
       axis.text = element_text(size = axis_text_size), 
       axis.title = element_text(size = axis_title_size)
     ) 

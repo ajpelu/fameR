@@ -43,11 +43,11 @@ biometryPlot <- function(x, base_size, axis_text_size = 24, ...){
   
   my_pal <- rcartocolor::carto_pal(n = 8, name = "Bold")[c(1, 3, 7, 2)]
   
-  ggplot::ggplot(biometry, aes(x = as.factor(name), y = value, color = name, fill = name)) +
-    ggplot::scale_color_manual(values = my_pal, guide = "none") +
-    ggplot::scale_fill_manual(values = my_pal, guide = "none") + 
-    ggplot::geom_boxplot( width = .2, fill = "white", size = 1.5, outlier.shape = NA) +
-    ggplot::theme(
+  ggplot2::ggplot(biometry, aes(x = as.factor(name), y = value, color = name, fill = name)) +
+    ggplot2::scale_color_manual(values = my_pal, guide = "none") +
+    ggplot2::scale_fill_manual(values = my_pal, guide = "none") + 
+    ggplot2::geom_boxplot( width = .2, fill = "white", size = 1.5, outlier.shape = NA) +
+    ggplot2::theme(
       axis.text = element_text(size = axis_text_size)) + 
     ggdist::stat_halfeye(
       adjust = .33, ## bandwidth
@@ -60,7 +60,7 @@ biometryPlot <- function(x, base_size, axis_text_size = 24, ...){
       range_scale = .3, 
       alpha = .5, size = 3
     ) + coord_flip() +
-    ggplot::theme_minimal(base_size = base_size) +
+    ggplot2::theme_minimal(base_size = base_size) +
     xlab("") + ylab("")
   
 }
