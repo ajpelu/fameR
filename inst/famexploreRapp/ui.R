@@ -46,13 +46,13 @@ vb <- list(
   temp_media = value_box(
     title = "Temperatura media del Suelo",
     showcase = bsicons::bs_icon("thermometer"),
-    value = textOutput("meanTemp"),
+    value = htmlOutput("meanTemp"),
     theme_color = "secondary"
   ),
   humedad_media = value_box(
     title = "Humedad media del Suelo",
     showcase = bsicons::bs_icon("moisture"),
-    value = textOutput("meanHumedad"),
+    value = htmlOutput("meanHumedad"),
     theme_color = "secondary"
   ),
   vecinos_abundancia = value_box(

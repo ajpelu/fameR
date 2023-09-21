@@ -82,14 +82,53 @@ server <- function(input, output, session) {
     data()$humedad_temp
   })
   
-  output$meanTemp <- renderText({
-    mean(data()$humedad_temp$temperatura, na.rm=FALSE)
+  temp_humedad <- reactive({ 
+    data()$humedad_temp |> 
+      na.omit() |> 
+      dplyr::select(referencia, temperatura, humedad) |> 
+      pivot_longer(-referencia) |> 
+      group_by(name) |> 
+      summarise(mean = mean(value, na.rm = FALSE), 
+                sd = sd(value, na.rm = FALSE),
+                se = sd/sqrt(length(value)), 
+                min = min(value, na.rm = FALSE),
+                max = max(value, na.rm = FALSE))
+    })
+  
+  
+  
+  output$meanTemp <- renderUI({
+    x <- subset(temp_humedad(), name == "temperatura")
+    shiny::tagList(
+      list(
+        shiny::h5(paste0(round(x$mean,2), ' ± ', round(x$se,2)), style = "font-size: 70%; text-align: center;"),
+        shiny::h5(paste0(round(x$min,2), ' - ', round(x$max,2)), style = "font-size: 60%; text-align: center;")
+      )
+    )
   })
   
-  output$meanHumedad <- renderText({
-    mean(data()$humedad_temp$humedad, na.rm=FALSE)
+  output$meanHumedad <- renderUI({
+    x <- subset(temp_humedad(), name == "humedad")
+    shiny::tagList(
+      list(
+        shiny::h5(paste0(round(x$mean,2), ' ± ', round(x$se,2)), style = "font-size: 70%; text-align: center;"),
+        shiny::h5(paste0(round(x$min,2), ' - ', round(x$max,2)), style = "font-size: 60%; text-align: center;")
+      )
+    )
   })
   
+  
+  
+  
+  
+  # output$meanTemp <- renderText({
+  #   mean(data()$humedad_temp$temperatura, na.rm=FALSE)
+  # })
+  # 
+  # output$meanHumedad <- renderText({
+  #   mean(data()$humedad_temp$humedad, na.rm=FALSE)
+  # })
+  # 
   
   # Biometry
   generateBiometriaPlot <- function(x){
