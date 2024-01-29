@@ -37,6 +37,7 @@ Imports:
     stringr,
     tibble,
     tidyr,
-    vegan
+    vegan,
+    bookdown
 Config/Needs/website: rmarkdown
 URL: https://ajpelu.github.io/famexploreR/
