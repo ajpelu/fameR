@@ -1,0 +1,7 @@
+url: https://ajpelu.github.io/famexploreR/
+template:
+  bootstrap: 5
+  bslib:
+    font_scale: 0.85
+lang: es
+
