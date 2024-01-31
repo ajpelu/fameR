@@ -16,6 +16,11 @@ knitr::opts_chunk$set(
 # famexploreR
 
 <!-- badges: start -->
+[![Project Status: Active – The project has reached a stable, usable
+state and is being actively
+developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
+[![License: GPL
+v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 <!-- badges: end -->
 
 El objetivo de `famexploreR` es poder importar datos de estadillos de campo de seguimiento de Flora Amenezada y realizar sobre ellos diferentes cálculos y gráficos para generar informes. 
@@ -55,6 +60,10 @@ devtools::install_github("ajpelu/famexploreR")
 library("famexploreR")
 launch_famexplorer()
 ```
+
+### Live 
+
+También se puede instalar el paquete en un servidor que contenga R-studio y shiny. De forma provisional se muestra un ejemplo [aquí](http://vlab.iecolab.es/ajpelu/famexploreR/)
 
 Todo el código necesario se encuentra en este [repositorio](https://github.com/ajpelu/famexploreR)
 

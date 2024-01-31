@@ -69,7 +69,7 @@ Diccionario de taxones derivado de Lista patrón de las especies silvestres pres
 #| fig.height: 10
 #| fig.width: 20
 
-knitr::include_graphics('../../docs/reference/figures/dicc_taxon.png')
+knitr::include_graphics('figures/dicc_taxon.png')
 ```
 
 ### *dicc_tratamiento*
@@ -115,7 +115,7 @@ Contiene una descripción de los diferentes sistemas de referencia de coordenada
 #| fig.height: 10
 #| fig.width: 20
 
-knitr::include_graphics('../../docs/reference/figures/dicc_crs.png')
+knitr::include_graphics('figures/dicc_crs.png')
 ```
 
 ## Entrada de *datos generales*
@@ -157,7 +157,7 @@ Se trata de la primera entrada de datos del formulario de campo (Figura \@ref(fi
 #| fig.height: 10
 #| fig.width: 20
 
-knitr::include_graphics('../../docs/reference/figures/entrada_datos.png')
+knitr::include_graphics('figures/entrada_datos.png')
 ```
 
 ## Entrada de *datos de suelo*
@@ -168,7 +168,7 @@ Actualmente ésta hoja de datos contiene unos determinados parámetros (pH, % li
 ```{r entradasuelos}
 #| fig.cap: "Vista de la hoja de entrada de datos de suelo" 
 
-knitr::include_graphics('../../docs/reference/figures/entrada_datos_suelo.png')
+knitr::include_graphics('figures/entrada_datos_suelo.png')
 ```
 
 ## Entrada de *datos de humedad y temperatura del suelo*
@@ -178,7 +178,7 @@ Hoja del formulario para introducir datos de parámetros de temperatura y humeda
 ```{r entradatemperatura}
 #| fig.cap: "Vista de la hoja de entrada de datos de temperatura y humedad del suelo" 
 
-knitr::include_graphics('../../docs/reference/figures/entrada_datos_temperatura.png')
+knitr::include_graphics('figures/entrada_datos_temperatura.png')
 ```
 
 ## Entrada de *datos de excrementos*
@@ -193,7 +193,7 @@ El campo ***excrementos_m2*** se calcula automáticamente. Los primeros campos, 
 ```{r entradaexcrementos}
 #| fig.cap: "Vista de la hoja de entrada de datos de temperatura y humedad del suelo"
 
-knitr::include_graphics('../../docs/reference/figures/entrada_datos_excrementos.png')
+knitr::include_graphics('figures/entrada_datos_excrementos.png')
 ```
 
 ## Entrada de *datos de la especie focal*
@@ -217,7 +217,7 @@ Asimismo, para cada individuo se indica la especie vecina más próxima (***espe
 ```{r entradafocal}
 #| fig.cap: "Vista de la hoja de entrada de datos de la especie focal"
 
-knitr::include_graphics('../../docs/reference/figures/entrada_datos_focal.png')
+knitr::include_graphics('figures/entrada_datos_focal.png')
 ```
 
 ## Entrada de *datos de herbivoría*
@@ -227,7 +227,7 @@ Hoja del formulario para introducir datos de daños por herbivoría en la especi
 ```{r entradaherbivoria}
 #| fig.cap: "Vista de la hoja de entrada de datos de herbivoría de la especie focal"
 
-knitr::include_graphics('../../docs/reference/figures/entrada_datos_herbivoria.png')
+knitr::include_graphics('figures/entrada_datos_herbivoria.png')
 ```
 
 ## Entrada de *datos de vecindad*
@@ -237,7 +237,7 @@ Hoja del formulario para introducir datos de composición de especies en torno a
 ```{r entradavecindad}
 #| fig.cap: "Vista de la hoja de entrada de datos de vecindad de la especie focal"
 
-knitr::include_graphics('../../docs/reference/figures/entrada_datos_vecindad.png')
+knitr::include_graphics('figures/entrada_datos_vecindad.png')
 ```
 
 ## Entrada de datos de composición de la comunidad vegetal: método de cobertura (*com_veg_cobertura*)
@@ -247,7 +247,7 @@ Hoja del formulario para introducir datos de la composición de la comunidad (Fi
 ```{r entradacobertura}
 #| fig.cap: "Vista de la hoja de entrada de datos de la comunidad comunidad vegetal por el método de cobertura"
 
-knitr::include_graphics('../../docs/reference/figures/entrada_datos_cobertura.png')
+knitr::include_graphics('figures/entrada_datos_cobertura.png')
 ```
 
 Se rellenarán tantas filas como especies se identifique dentro del polígono de muestreo. Las dimensiones del polígono de muestreo (*columna dimensiones_m2*) se han incluido en la pestaña inicial de datos, y no es necesario rellenarla aquí. <br> 
@@ -261,7 +261,7 @@ Hoja del formulario para introducir datos de la composición de la comunidad (Fi
 ```{r entradacontactos}
 #| fig.cap: "Vista de la hoja de entrada de datos de la comunidad comunidad vegetal por el método de contactos"
 
-knitr::include_graphics('../../docs/reference/figures/entrada_datos_contactos.png')
+knitr::include_graphics('figures/entrada_datos_contactos.png')
 ```
 
 Se rellenarán tantas filas como especies se identifique dentro del polígono de muestreo. La longitud del transecto (columna *longitud_transecto_m*), la separación entre segmentos (columna *separación_segmento_m*) y el número de puntos por segmento (columna *puntos_por_segmento*) se han incluido en la pestaña inicial de datos, y no es necesario rellenarlos aquí. <br>
