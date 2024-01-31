@@ -1,0 +1,14 @@
+citHeader("To cite famexploreR or acknowledge its use, please cite:")
+
+citEntry(
+    entry = "Manual",
+    title = {"famexploreR"},
+    author = personList(as.person("Antonio J. Pérez-Luque"), as.person("Juan Lorite")),
+    year = {"2023"},
+    note = "R package version 1.0.0",
+    url = "https://ajpelu.github.io/famexploreR/",
+    textVersion  =
+    paste("Pérez-Luque, Antonio J. and Lorite, Juan (2023). famexploreR: shinyapp para exploración de datos de campo de Flora Amenazada. R package version 1.0.0. https://ajpelu.github.io/famexploreR/")
+    )
+
+
