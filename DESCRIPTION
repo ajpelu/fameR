@@ -13,7 +13,7 @@ Description: A shiny app that explores data from Threathened Flora. It uses cust
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 Depends: 
     R (>= 4.0)
 LazyData: true
@@ -45,6 +45,7 @@ Imports:
     leaflet,
     formattable,
     kableExtra,
-    flextable
+    flextable,
+    readr
 Config/Needs/website: rmarkdown
 URL: https://ajpelu.github.io/famexploreR/
