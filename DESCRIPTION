@@ -38,6 +38,13 @@ Imports:
     tibble,
     tidyr,
     vegan,
-    bookdown
+    bookdown,
+    bslib,
+    bsicons,
+    mapSpain,
+    leaflet,
+    formattable,
+    kableExtra,
+    flextable
 Config/Needs/website: rmarkdown
 URL: https://ajpelu.github.io/famexploreR/
