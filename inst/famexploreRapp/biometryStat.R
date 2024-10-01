@@ -27,8 +27,8 @@ biometryStat <- function(x,
     ), .id = "variable") |>
     mutate(variable = case_when(
       variable == "altura_cm" ~ "Altura (cm)",
-      variable == "dmayor_cm" ~ "Diámetro mayor (cm)",
-      variable == "dmenor_cm" ~ "Diámetro menor (cm)"
+      variable == "dmayor_cm" ~ "Di\u00e1metro mayor (cm)",
+      variable == "dmenor_cm" ~ "Di\u00e1metro menor (cm)"
     ))
   return(result)
 }
