@@ -1,84 +1,30 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/404.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/articles/estadillos.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/articles/starting_guide.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/index.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/reference/biometryPlot.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/reference/biometryStat.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/reference/computeFlowering.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/reference/diversityCommunity.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/reference/famexploreR-package.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/reference/herbivory.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/reference/hojas_validas.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/reference/launch_famexplorer.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/reference/neighborAbundance_stats.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/reference/neighborSpecies_stats.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/reference/plotCommunity.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/reference/plotFlowering.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/reference/prepareGeo.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/reference/preparePopup.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/reference/readAllsheets.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/reference/summarizeSoil.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/reference/ternaryPlot.html</loc>
-  </url>
-  <url>
-    <loc>https://ajpelu.github.io/famexploreR/reference/vecindadPlot.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://ajpelu.github.io/famexploreR/404.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/LICENSE-text.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/LICENSE.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/articles/estadillos.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/articles/index.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/articles/starting_guide.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/authors.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/index.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/reference/biometryPlot.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/reference/biometryStat.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/reference/computeFlowering.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/reference/diversityCommunity.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/reference/famexploreR-package.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/reference/herbivory.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/reference/hojas_validas.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/reference/index.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/reference/launch_famexplorer.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/reference/neighborAbundance_stats.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/reference/neighborSpecies_stats.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/reference/plotCommunity.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/reference/plotFlowering.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/reference/prepareGeo.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/reference/preparePopup.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/reference/readAllsheets.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/reference/summarizeSoil.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/reference/ternaryPlot.html</loc></url>
+<url><loc>https://ajpelu.github.io/famexploreR/reference/vecindadPlot.html</loc></url>
 </urlset>
+
