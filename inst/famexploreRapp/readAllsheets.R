@@ -12,6 +12,7 @@
 #'
 #' @importFrom readODS list_ods_sheets read_ods
 #' @importFrom readxl excel_sheets read_excel
+#' @importFrom readr locale
 #'
 #' @export
 readAllsheets <- function(upload_path, valid_sheets) {

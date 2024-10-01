@@ -29,8 +29,8 @@ plotCommunity <- function(x,
   # Select plan community dataset according to method
   comunidad <- switch(
     metodo,
-    "método cobertura" = x$com_veg_cobertura,
-    "método contacto" = x$com_veg_contactos,
+    "m\u00e9todo cobertura" = x$com_veg_cobertura,
+    "m\u00e9todo contacto" = x$com_veg_contactos,
     "There is not data about plant community" = NULL
   )
   

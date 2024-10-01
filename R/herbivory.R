@@ -36,7 +36,7 @@ herbivory <- function(data, bar_color = "blue", point_fill = "green", point_colo
     ggplot2::geom_bar(stat = "identity", aes(y = mean_damage), fill = bar_color) +
     ggplot2::geom_errorbar(aes(ymin = mean_damage - sd_damage, ymax = mean_damage + sd_damage), width = 0.2, colour = bar_color) +
     ggplot2::geom_point(aes(y = -1, size = leaf_damages_pct), shape = 21, color = point_color, fill = point_fill, alpha = point_alpha) +
-    ggplot2::labs(x = "Individuo id", y = "Daño medio de las hojas comidas (%) ") +
+    ggplot2::labs(x = "Individuo id", y = "Da\u00f1o medio de las hojas comidas (%) ") +
     ggplot2::scale_size_continuous(range = c(2, 10), name = "% hojas comidas") +
     ggplot2::theme_minimal()
   

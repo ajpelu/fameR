@@ -28,12 +28,12 @@ preparePopup <- function(x, mdfields = c("especie focal", "localidad", "site", "
   
   # Mappin list of field names to rename (if they exist)
   rename_mapping <- list("especie focal" = "Taxon", 
-                         "site" = "Código sitio",
-                         "poblacion" = "Código población",
+                         "site" = "C\u00f3digo sitio",
+                         "poblacion" = "C\u00f3digo poblaci\u00f3n",
                          "tratamiento" = "Tratamiento",
                          "localidad" = "Localidad", 
-                         "elevacion" = "Elevación",
-                         "reference" = "Código plot",
+                         "elevacion" = "Elevaci\u00f3n",
+                         "reference" = "C\u00f3digo plot",
                          "fecha" = "Fecha")
   
   # Rename fields based on the mapping (if they exist)

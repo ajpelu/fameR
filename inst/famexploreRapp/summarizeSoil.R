@@ -33,18 +33,18 @@ summarizeSoil <- function(x){
     pivot_longer(cols = everything(), 
                  names_to = c(".value", "parameter"), 
                  names_pattern = "(.*)_(mean|sd|se)") |> 
-    rename(`Carbono Orgánico (%)` = CO, 
-           `Fósforo (ppm)` = P,
-           `Materia Orgánica (%)` = MO,
-           `Nitrógeno Total (%)` = N_total,
-           `Carbono Total (%)` = C_total,
-           `Conductividad eléctrica (µS/cm)` = CE,
-           `Saturación (%)` = sat, 
-           `Fluoruros (mg/L)` = fluoruro,
-           `Cloruros (mg/L)` = cloruro,
-           `Nitratos (mg/L)` = nitrato,
-           `Nitritos (mg/L)` = nitrito,
-           `Sulfatos (mg/L)` = sulfato) |> 
+    rename("Carbono Org\u00e1nico (%)" = CO,
+           "F\u00f3sforo (ppm)" = P,
+           "Materia Org\u00e1nica (%)" = MO,
+           "Nitr\u00f3geno Total (%)" = N_total,
+           "Carbono Total (%)" = C_total,
+           "Conductividad el\u00e9ctrica (\u00b5S/cm)" = CE,
+           "Saturaci\u00f3n (%)" = sat,
+           "Fluoruros (mg/L)" = fluoruro,
+           "Cloruros (mg/L)" = cloruro,
+           "Nitratos (mg/L)" = nitrato,
+           "Nitritos (mg/L)" = nitrito,
+           "Sulfatos (mg/L)" = sulfato) |>
     pivot_longer(cols = -parameter, names_to = "Variable") |> 
     pivot_wider(names_from = parameter, values_from = value) |> 
     dplyr::rename(`Media` = mean) |> 

@@ -33,8 +33,8 @@ biometryPlot <- function(x, base_size, axis_text_size = 24, ...){
   
   nombre_variables <- c(
     altura_cm = "Altura", 
-    dmayor_cm = "Diámetro mayor",
-    dmenor_cm = "Diámetro menor")
+    dmayor_cm = "Di\u00e1metro mayor",
+    dmenor_cm = "Di\u00e1metro menor")
   
   biometry <- x$especie_focal |> 
     dplyr::select(especie_code:id_individuo, altura_cm, dmayor_cm, dmenor_cm) |> 
