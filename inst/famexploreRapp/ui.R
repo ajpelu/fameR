@@ -49,50 +49,50 @@ vb <- list(
     title = "Temperatura media del Suelo",
     showcase = bsicons::bs_icon("thermometer"),
     value = htmlOutput("meanTemp"),
-    theme_color = "secondary"
+    theme = "secondary"
   ),
   humedad_media = value_box(
     title = "Humedad media del Suelo",
     showcase = bsicons::bs_icon("moisture"),
     value = htmlOutput("meanHumedad"),
-    theme_color = "secondary"
+    theme = "secondary"
   ),
   vecinos_abundancia = value_box(
     title = shiny::h3("Abundancia vecinos", style = "text-align: center;"),
     showcase = bsicons::bs_icon("align-center"),
     value = htmlOutput("mean_vecinos_ab"),
-    theme_color = "dark"
+    theme = "dark"
   ),
   vecinos_sps = value_box(
     title = shiny::h3("N especies vecinas", style = "text-align: center;"),
     showcase = icon("pagelines", class = "fa-3x"),
     value = htmlOutput("mean_vecinos_sp"),
     # p(htmlOutput("lu_vecinos_sp")),
-    theme_color = "dark"
+    theme = "dark"
   ),
   comunidad_richness = value_box(
     title = "Riqueza de Especies",
     showcase = icon("pagelines", class = "fa-3x"),
     value = textOutput("richness"),
-    theme_color = "dark"
+    theme = "dark"
   ), 
   comunidad_shannon = value_box(
     title = "Diversidad de Shannon",
     showcase = icon("seedling", class = "fa-3x"),
     value = textOutput("diversity_shannon"),
-    theme_color = "dark"
+    theme = "dark"
   ), 
   comunidad_simpson = value_box(
     title = "Diversidad de Simpson",
     showcase = icon("seedling", class = "fa-3x"),
     value = textOutput("diversity_simpson"),
-    theme_color = "dark"
+    theme = "dark"
   ), 
   comunidad_evenness = value_box(
     title = "Índice de Equitatividad (Pileou's)",
     showcase = icon("leaf", class = "fa-3x"),
     value = textOutput("evenness_pielou"),
-    theme_color = "dark"
+    theme = "dark"
   )
 )
 
