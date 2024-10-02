@@ -32,20 +32,20 @@
 #'   limo = c(0.3, 0.3, 0.4, 0.1)
 #' )
 #' 
-#' generateTernaryPlot(data, xvar = 'arena', yvar = 'arcilla', 
+#' ternaryPlot(data, xvar = 'arena', yvar = 'arcilla', 
 #' zvar = 'limo')
 #' }
 #'
 #'
-#' @import ggtern
-#' @importFrom stringr str_to_title
+#' @import ggtern ggplot2
 #' @export
 #'
 ternaryPlot <- function(data, xvar, yvar, zvar, bsize, point_size, ...) {
   # Capitalize the first letter of variable names for axis labels
-  xvar_label <- str_to_title(xvar)
-  yvar_label <- str_to_title(yvar)
-  zvar_label <- str_to_title(zvar)
+  
+  xvar_label <- capitalize_first(xvar)
+  yvar_label <- capitalize_first(yvar)
+  zvar_label <- capitalize_first(zvar)
   
   # Create the ternary plot
   plot <- ggtern::ggtern(data = data, aes_string(x = xvar, y = yvar, z = zvar)) +
