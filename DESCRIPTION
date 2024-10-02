@@ -27,7 +27,6 @@ Imports:
     glue,
     lubridate,
     purrr,
-    rcartocolor,
     readODS,
     readxl,
     rlang,
