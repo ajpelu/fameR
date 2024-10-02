@@ -40,13 +40,26 @@ source("vecindadPlot.R")
 
 server <- function(input, output, session) {
   
+  example_file <- "../data_ejemplo/ficha_campo.xlsx"
+  
   data <- reactive({
-    req(input$upload)
-    readAllsheets(upload_path = input$upload$datapath, valid_sheets = hojas_validas)
+    
+    # Esperar hasta que el usuario haga clic en el botón "Procesar"
+    req(input$submit)
+
+    if (input$use_example) {
+      # Si el checkbox está seleccionado, cargar el archivo de ejemplo
+      return(readAllsheets(upload_path = example_file, valid_sheets = hojas_validas))
+    } else if (!is.null(input$upload)) {
+      # Si el checkbox no está seleccionado, cargar el archivo subido por el usuario
+      return(readAllsheets(upload_path = input$upload$datapath, valid_sheets = hojas_validas))
+    } else {
+      return(readAllsheets(upload_path = example_file, valid_sheets = hojas_validas))
+    }
   })
   
   
-
+  
   output$metadata <- renderTable({
     data()$datos_generales
   })

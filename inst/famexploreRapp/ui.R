@@ -100,11 +100,24 @@ link_github <- tags$a(shiny::icon("github"), "Source code", href = "https://gith
 
 ui <- page_navbar(
   title = "famExploreR v 1.0.0",
+  
+  # Agrega el estilo CSS para cambiar el tamaño de la fuente de los labels 
+  tags$style(HTML("
+    #upload-label {
+      font-size: 12px;
+    }
+    #upload_spat-label {
+      font-size: 12px;
+    }
+  ")),
+  
   sidebar = sidebar(
     shiny::h4("Estadillo de campo"), 
-    fileInput("upload", label = "", 
+    fileInput("upload", label = "Sube tu archivo (o usa el conjunto de datos de ejemplo)", 
               accept = c(".ods", ".xlsx"),
               placeholder = "Seleccione el archivo a subir"),
+    checkboxInput("use_example", "Usar datos de ejemplo", value = FALSE),  # Checkbox para usar datos de ejemplo
+    actionButton("submit", "Procesar"),
     shiny::br(), 
     shiny::br(),
     shiny::h4("Información espacial"),
