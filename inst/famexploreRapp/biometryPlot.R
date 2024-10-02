@@ -26,7 +26,6 @@
 #' @importFrom ggplot2 ggplot scale_color_manual scale_fill_manual geom_boxplot theme coord_flip
 #' @importFrom ggdist stat_halfeye
 #' @importFrom gghalves geom_half_point
-#' @importFrom rcartocolor carto_pal
 #'
 #' @export
 biometryPlot <- function(x, base_size, axis_text_size = 24, ...){
