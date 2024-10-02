@@ -17,8 +17,8 @@ diversityCommunity <- function(x) {
   
   # Extract the method from general data 
   metodo <- x$datos_generales  |>
-    filter(campo == "comunidad_vegetal")  |>
-    pull(valor)
+    dplyr::filter(campo == "comunidad_vegetal")  |>
+    dplyr::pull(valor)
   
   # Select plan community dataset according to method 
   comunidad <- switch(
@@ -35,9 +35,9 @@ diversityCommunity <- function(x) {
   
   # Prepare data 
   m <- comunidad |>
-    na.omit() |> 
+    stats::na.omit() |> 
     dplyr::select(referencia, especie_acomp, cobertura)  |>
-    pivot_wider(names_from = especie_acomp, values_from = cobertura)  
+    tidyr::pivot_wider(names_from = especie_acomp, values_from = cobertura)  
   
   # Caompute diversity indices 
   div_h <- vegan::diversity(m[-1], index = "shannon")

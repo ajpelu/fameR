@@ -44,12 +44,11 @@ computeFlowering <- function(x, var_interest) {
         n_ind = n(),
         pct_ind = (n() / nrow(x)) * 100,
         mean_count = mean(!!column_name),
-        sd_count = sd(!!column_name),
+        sd_count = stats::sd(!!column_name),
         se_count = sd_count / sqrt(n())
       )
   })
   
-  result_summary <- bind_rows(summary_list)
+  result_summary <- dplyr::bind_rows(summary_list)
   return(result_summary)
 }
-
