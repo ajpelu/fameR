@@ -19,17 +19,17 @@
 herbivory <- function(data, bar_color = "blue", point_fill = "green", point_color = "black", point_alpha = 0.9) {
   # Filter and calculate damage metrics
   damage <- data |>
-    filter(comido_pct > 0) |>
-    group_by(id_individuo) |>
-    summarize(
+    dplyr::filter(comido_pct > 0) |>
+    dplyr::group_by(id_individuo) |>
+    dplyr::summarize(
       leaf_damages_pct = (n() / 5) * 100,
       mean_damage = mean(comido_pct),
-      sd_damage = sd(comido_pct),
+      sd_damage = stats::sd(comido_pct),
       se_damage = sd_damage / sqrt(length(comido_pct))
     ) |>
-    complete(id_individuo = unique(data$id_individuo), 
+    tidyr::complete(id_individuo = unique(data$id_individuo), 
              fill = list(leaf_damages_pct = 0, mean_damage = NA, sd_damage = NA, se_damage = NA)) |>
-    mutate(id_individuo = as.factor(id_individuo))
+    dplyr::mutate(id_individuo = as.factor(id_individuo))
   
   # Create the ggplot
   plot_damage <- ggplot2::ggplot(damage, aes(x = id_individuo)) +
