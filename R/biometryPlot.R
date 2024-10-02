@@ -41,7 +41,7 @@ biometryPlot <- function(x, base_size, axis_text_size = 24, ...){
     pivot_longer(cols = c(altura_cm, dmayor_cm, dmenor_cm)) |> 
     mutate(name = recode(name, !!!nombre_variables))
   
-  my_pal <- rcartocolor::carto_pal(n = 8, name = "Bold")[c(1, 3, 7, 2)]
+  my_pal <- c("#7F3C8D","#3969AC","#E68310","#11A579")
   
   ggplot2::ggplot(biometry, aes(x = as.factor(name), y = value, color = name, fill = name)) +
     ggplot2::scale_color_manual(values = my_pal, guide = "none") +

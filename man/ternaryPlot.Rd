@@ -46,7 +46,7 @@ data <- data.frame(
   limo = c(0.3, 0.3, 0.4, 0.1)
 )
 
-generateTernaryPlot(data, xvar = 'arena', yvar = 'arcilla', 
+ternaryPlot(data, xvar = 'arena', yvar = 'arcilla', 
 zvar = 'limo')
 }
 

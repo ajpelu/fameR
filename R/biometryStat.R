@@ -10,29 +10,27 @@
 #' @return A data frame with columns for each statistic (mean, sd, se, min, max) and a
 #'   corresponding variable column.
 #'
-#' @import dplyr tidyr purrr tibble
+#' @import dplyr purrr 
 #' @export
 #' 
 #' 
-biometryStat <- function(x, 
-                         variables = c("altura_cm", "dmayor_cm", "dmenor_cm")) {
+biometryStat <- function(x, variables = c("altura_cm", "dmayor_cm", "dmenor_cm")) {
   result <- x |>
-    select(all_of(variables)) |>
-    map_dfr(~ tibble(
+    dplyr::select(dplyr::all_of(variables)) |>
+    purrr::map_dfr(~ data.frame(
       mean = mean(.x, na.rm = TRUE),
-      sd = sd(.x, na.rm = TRUE),
-      se = sd(.x, na.rm = TRUE) / sqrt(length(.x)),
+      sd = stats::sd(.x, na.rm = TRUE),
+      se = stats::sd(.x, na.rm = TRUE) / sqrt(length(.x)),
       min = min(.x, na.rm = TRUE),
       max = max(.x, na.rm = TRUE)
     ), .id = "variable") |>
-    mutate(variable = case_when(
+    dplyr::mutate(variable = dplyr::case_when(
       variable == "altura_cm" ~ "Altura (cm)",
-      variable == "dmayor_cm" ~ "Di\u00e1metro  mayor (cm)",
-      variable == "dmenor_cm" ~ "Di\u00e1metro  menor (cm)"
+      variable == "dmayor_cm" ~ "Di\u00e1metro mayor (cm)",
+      variable == "dmenor_cm" ~ "Di\u00e1metro menor (cm)"
     ))
   return(result)
 }
- 
 
 
 
