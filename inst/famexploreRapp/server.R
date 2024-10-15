@@ -59,7 +59,6 @@ server <- function(input, output, session) {
   })
   
   
-  
   output$metadata <- renderTable({
     data()$datos_generales
   })
@@ -69,25 +68,19 @@ server <- function(input, output, session) {
     
     shiny::tagList(
       list(
-        shiny::h1(x$`especie focal`),
-        shiny::br(),
-        shiny::h4("Localidad"),
-        shiny::h5(paste0("Localidad: ", x$localidad)),
-        shiny::h5(paste0("Elevación: ", x$elevacion, " (m.a.s.l)")), 
-        shiny::br(), 
-        shiny::h5(paste0("Código de Población: ", x$site)), 
-        shiny::h5(paste0("Tratamiento (dentro/fuera): ", x$tratamiento)),
-        shiny::h5(paste0("Referencia: ", x$reference)),
-        shiny::h5(paste0("Fecha: ", format(lubridate::ymd(x$fecha), "%Y-%d-%m"))),
-        shiny::br(),
-        shiny::h4("Vallado"),
-        shiny::h5(paste0("Tipo: ", x$vallado_tipo)),
-        shiny::h5(paste0("Año de instalación: ", x$vallado_year)), 
-        shiny::h5(paste0("Dimensiones (perímetro): ", x$vallado_perimetro)), 
-        shiny::h5(paste0("Estado del vallado): ", x$vallado_perimetro)), 
-        shiny::br(),
-        shiny::h4("Excrementos"),
-        shiny::h5(HTML(paste0("<strong>Densidad excrementos (n/m", tags$sup(2), "):</strong> ", data()$excrementos$excrementos_m2, " (", 
+        shiny::h2(x$`especie focal`),
+        shiny::h5(HTML(paste0("<strong>Localidad:</strong> ", x$localidad, " (", x$elevacion, " m.a.s.l)"))),
+        shiny::h6(paste0("Código de Población: ", x$site)), 
+        shiny::h6(paste0("Tratamiento (dentro/fuera): ", x$tratamiento)),
+        shiny::h6(paste0("Referencia: ", x$reference)),
+        shiny::h6(paste0("Fecha: ", format(lubridate::ymd(x$fecha), "%Y-%d-%m"))),
+        shiny::h5("Vallado"),
+        shiny::h6(paste0("Tipo: ", x$vallado_tipo)),
+        shiny::h6(paste0("Año de instalación: ", x$vallado_year)), 
+        shiny::h6(paste0("Dimensiones (perímetro): ", x$vallado_perimetro)), 
+        shiny::h6(paste0("Estado del vallado): ", x$vallado_perimetro)), 
+        shiny::h6("Excrementos"),
+        shiny::h6(HTML(paste0("<strong>Densidad excrementos (n/m", tags$sup(2), "):</strong> ", data()$excrementos$excrementos_m2, " (", 
                              data()$excrementos$excrementos_n, " en ", data()$excrementos$superficie_m2, ")"))),
         shiny::br()
       )
@@ -383,16 +376,29 @@ server <- function(input, output, session) {
 
   output$generateReport <- downloadHandler(
     filename = function() {
-      "famexploreR_report.docx"  # Set the filename for the downloadedreport
+      "famexploreR_report.docx"  # Set the filename 
     },
     content = function(file) {
-      # Define parameters to be passed to the Rmd file
-      params <- list(data = data())  
+      withProgress(
+        message = "Generando Informe",
+        detail = "Esta operación puede durar unos segundos",
+        value = 0,
+        {
+          for (i in 1:10) {
+              incProgress(1 / 10) 
+              Sys.sleep(0.25)}
+          
+          # Define parameters to be passed to the Rmd file
+          params <- list(data = data())  
+          
+          rmarkdown::render("famexploreR_report.Rmd", 
+                            output_file = file, 
+                            params = params,
+                            envir = new.env(parent = globalenv()))
+          
+        })
       
-      rmarkdown::render("famexploreR_report.Rmd", 
-                        output_file = file, 
-                        params = params,
-                        envir = new.env(parent = globalenv()))
+      showNotification("Informe generado!", type = "warning")
     }
   )
   
