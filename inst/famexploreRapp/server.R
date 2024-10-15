@@ -47,6 +47,11 @@ server <- function(input, output, session) {
     # Esperar hasta que el usuario haga clic en el botón "Procesar"
     req(input$submit)
     
+    id <- showNotification("Procesando datos, por favor espere...", type = "message", duration = NULL, closeButton = FALSE)
+    
+    # This close the notification after end of the process
+    on.exit(removeNotification(id), add = TRUE)
+    
     if (input$use_example) {
       # Si el checkbox está seleccionado, cargar el archivo de ejemplo
       return(readAllsheets(upload_path = example_file, valid_sheets = hojas_validas))
@@ -56,6 +61,7 @@ server <- function(input, output, session) {
     } else {
       return(readAllsheets(upload_path = example_file, valid_sheets = hojas_validas))
     }
+    
   })
   
   
@@ -126,9 +132,6 @@ server <- function(input, output, session) {
       )
     )
   })
-  
-  
-  
   
   
   # output$meanTemp <- renderText({
@@ -214,29 +217,42 @@ server <- function(input, output, session) {
   # Define an eventReactive to handle shapefile upload
   updated_map <- eventReactive(input$upload_spat, {
     
-    shpdf <- input$upload_spat
-    tempdirname <- dirname(shpdf$datapath[1])
     
-    # Rename files
-    for (i in 1:nrow(shpdf)) {
-      file.rename(
-        shpdf$datapath[i],
-        paste0(tempdirname, "/", shpdf$name[i])
-      )
-    }
+    # add message to process data 
+    withProgress(
+      message = "Procesando información espacial ...", value = 0, {
+        for (i in 1:10) {
+          incProgress(1/10)
+          Sys.sleep(0.25)
+        }
+        
+        shpdf <- input$upload_spat
+        tempdirname <- dirname(shpdf$datapath[1])
+        
+        # Rename files
+        for (i in 1:nrow(shpdf)) {
+          file.rename(
+            shpdf$datapath[i],
+            paste0(tempdirname, "/", shpdf$name[i])
+          )
+        }
+        
+        # Read the shapefile
+        geo <- sf::st_read(paste(tempdirname, shpdf$name[grep(pattern = "*.shp$", shpdf$name)], sep = "/"))
+        geo <- sf::st_transform(geo, 4326)
+        
+        # Add the shapefile to the existing Leaflet map
+        initial_map() |> 
+          addPolygons(data = geo,
+                      fillColor = "blue",  # Customize fill color and other options
+                      color = "black",
+                      weight = 1,
+                      opacity = 1,
+                      fillOpacity = 0.2)
+        
+      }
+    )
     
-    # Read the shapefile
-    geo <- sf::st_read(paste(tempdirname, shpdf$name[grep(pattern = "*.shp$", shpdf$name)], sep = "/"))
-    geo <- sf::st_transform(geo, 4326)
-    
-    # Add the shapefile to the existing Leaflet map
-    initial_map() |> 
-      addPolygons(data = geo,
-                  fillColor = "blue",  # Customize fill color and other options
-                  color = "black",
-                  weight = 1,
-                  opacity = 1,
-                  fillOpacity = 0.2)
   })
   
   
