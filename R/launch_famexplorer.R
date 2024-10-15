@@ -12,7 +12,15 @@ launch_famexplorer <- function() {
   if (appDir == "") {
     stop("Could not find app directory. Try re-installing `famexploreR`.", call. = FALSE)
   }
+  
+  if (!dir.exists(appDir)) {
+    stop(paste("Error: The application directory does not exist:", appDir))
+  }
 
+  if (!requireNamespace("shiny", quietly = TRUE)) {
+    stop("Error: The 'shiny' package is not installed. Please install it before proceeding.")
+  }
+  
   # Run app
   shiny::runApp(appDir, display.mode = "normal", launch.browser = TRUE)
 }
