@@ -30,6 +30,38 @@
 #' @export
 biometryPlot <- function(x, base_size, axis_text_size = 24, ...){
   
+  if (!inherits(x, "list")) {
+    stop("Error: 'x' debe ser una lista que contenga el elemento 'especie_focal'.")
+  }
+  
+  if (!"especie_focal" %in% names(x)) {
+    stop("Error: La lista 'x' debe contener el elemento 'especie_focal'.")
+  }
+  
+  # Verificar que 'x$especie_focal' es un data frame
+  if (!inherits(x$especie_focal, "data.frame")) {
+    stop("Error: 'x$especie_focal' debe ser un data frame.")
+  }
+  
+  # Columnas requeridas
+  required_columns <- c("especie_code", "id_individuo", "altura_cm", "dmayor_cm", "dmenor_cm")
+  
+  # Verificar que las columnas requeridas están presentes
+  missing_columns <- setdiff(required_columns, names(x$especie_focal))
+  if (length(missing_columns) > 0) {
+    stop(paste("Error: Las siguientes columnas faltan en 'x$especie_focal':", paste(missing_columns, collapse = ", ")))
+  }
+  
+  # Verificar que 'base_size' es numérico y positivo
+  if (!is.numeric(base_size) || length(base_size) != 1 || base_size <= 0) {
+    stop("Error: 'base_size' debe ser un número positivo.")
+  }
+  
+  # Verificar que 'axis_text_size' es numérico y positivo
+  if (!is.numeric(axis_text_size) || length(axis_text_size) != 1 || axis_text_size <= 0) {
+    stop("Error: 'axis_text_size' debe ser un número positivo.")
+  }
+  
   nombre_variables <- c(
     altura_cm = "Altura", 
     dmayor_cm = "Di\u00e1metro mayor",
