@@ -46,7 +46,7 @@ server <- function(input, output, session) {
     
     # Esperar hasta que el usuario haga clic en el botón "Procesar"
     req(input$submit)
-
+    
     if (input$use_example) {
       # Si el checkbox está seleccionado, cargar el archivo de ejemplo
       return(readAllsheets(upload_path = example_file, valid_sheets = hojas_validas))
@@ -81,7 +81,7 @@ server <- function(input, output, session) {
         shiny::h6(paste0("Estado del vallado): ", x$vallado_perimetro)), 
         shiny::h6("Excrementos"),
         shiny::h6(HTML(paste0("<strong>Densidad excrementos (n/m", tags$sup(2), "):</strong> ", data()$excrementos$excrementos_m2, " (", 
-                             data()$excrementos$excrementos_n, " en ", data()$excrementos$superficie_m2, ")"))),
+                              data()$excrementos$excrementos_n, " en ", data()$excrementos$superficie_m2, ")"))),
         shiny::br()
       )
     )
@@ -103,7 +103,7 @@ server <- function(input, output, session) {
                 se = sd/sqrt(length(value)), 
                 min = min(value, na.rm = FALSE),
                 max = max(value, na.rm = FALSE))
-    })
+  })
   
   
   
@@ -146,7 +146,6 @@ server <- function(input, output, session) {
     biometryPlot(data(), base_size = 20)
   })
   
-  
   output$biometria_stats <- renderTable({
     biometryStat(data()$especie_focal) |> 
       mutate(across(c(mean, sd, se), ~ round(.x, digits = 2))) |> 
@@ -162,8 +161,6 @@ server <- function(input, output, session) {
     g <- plotFlowering(s) 
     ggplotly(g)
   })
-  
-  
   
   # Plot Soil ternary 
   ternary_data <- reactive({
@@ -188,11 +185,17 @@ server <- function(input, output, session) {
       formattable()
   })
   
-  
   # Map 
   initial_map <- reactive({
-    req(input$upload)
+    req(data())
+    
+    # Check if there are valid coordinates to draw the map
     coord_data <- st_transform(prepareGeo(data()$datos_generales), 4326)
+    
+    if (nrow(coord_data) == 0) {
+      showNotification("No hay coordenadas válidas para dibujar el mapa", type = "error")
+    }
+    
     custom_popup <- suppressWarnings(preparePopup(data()$datos_generales))
     
     leaflet::leaflet(data = coord_data) |> 
@@ -204,45 +207,48 @@ server <- function(input, output, session) {
       leaflet::addMarkers(popup = custom_popup) |> 
       addLayersControl(
         baseGroups = c("Base", "LIDAR", "Curvas de Nivel", "MTN", "Ortofoto"),
-        options = layersControlOptions(collapsed = FALSE))
-    })
-
+        options = layersControlOptions(collapsed = FALSE)) 
+  })
+  
   
   # Define an eventReactive to handle shapefile upload
   updated_map <- eventReactive(input$upload_spat, {
-  
-      shpdf <- input$upload_spat
-      tempdirname <- dirname(shpdf$datapath[1])
-      
-      # Rename files
-      for (i in 1:nrow(shpdf)) {
-        file.rename(
-          shpdf$datapath[i],
-          paste0(tempdirname, "/", shpdf$name[i])
-        )
-      }
-      
-      # Read the shapefile
-      geo <- sf::st_read(paste(tempdirname, shpdf$name[grep(pattern = "*.shp$", shpdf$name)], sep = "/"))
-      geo <- sf::st_transform(geo, 4326)
-      
-      # Add the shapefile to the existing Leaflet map
-      m <- initial_map() |> 
-        addPolygons(data = geo,
-                    fillColor = "blue",  # Customize fill color and other options
-                    color = "black",
-                    weight = 1,
-                    opacity = 1,
-                    fillOpacity = 0.2)
-    })
+    
+    shpdf <- input$upload_spat
+    tempdirname <- dirname(shpdf$datapath[1])
+    
+    # Rename files
+    for (i in 1:nrow(shpdf)) {
+      file.rename(
+        shpdf$datapath[i],
+        paste0(tempdirname, "/", shpdf$name[i])
+      )
+    }
+    
+    # Read the shapefile
+    geo <- sf::st_read(paste(tempdirname, shpdf$name[grep(pattern = "*.shp$", shpdf$name)], sep = "/"))
+    geo <- sf::st_transform(geo, 4326)
+    
+    # Add the shapefile to the existing Leaflet map
+    initial_map() |> 
+      addPolygons(data = geo,
+                  fillColor = "blue",  # Customize fill color and other options
+                  color = "black",
+                  weight = 1,
+                  opacity = 1,
+                  fillOpacity = 0.2)
+  })
   
   
   # Use the shapefileUpload eventReactive result to update the Leaflet map
   output$map <- leaflet::renderLeaflet({
-    if (!is.null(updated_map())) {updated_map() } else {initial_map()}
-  })
-  
-
+    if (!is.null(input$upload_spat)) {
+      updated_map()
+    } else {
+      initial_map()
+    }
+    })
+    
   # Vecindad 
   stat_vecinos_sps <- reactive({
     x <- data()$vecindad |> na.omit()
@@ -304,7 +310,7 @@ server <- function(input, output, session) {
     )
   })
   
-
+  
   output$mean_vecinos_sp <- renderUI({
     x <- subset(stats_vecinos_ab_summ(), variable == "n_sps_vecinas")
     
@@ -314,7 +320,7 @@ server <- function(input, output, session) {
         shiny::h5(paste0(round(x$min,2), ' - ', round(x$max,2)), style = "font-size: 50%; text-align: center;")
       )
     )
-#     paste0(round(x$avg,2), ' ± ', round(x$se,2))
+    #     paste0(round(x$avg,2), ' ± ', round(x$se,2))
   })
   
   # output$lu_vecinos_sp <- renderUI({
@@ -373,7 +379,7 @@ server <- function(input, output, session) {
     
   })
   
-
+  
   output$generateReport <- downloadHandler(
     filename = function() {
       "famexploreR_report.docx"  # Set the filename 
@@ -385,8 +391,8 @@ server <- function(input, output, session) {
         value = 0,
         {
           for (i in 1:10) {
-              incProgress(1 / 10) 
-              Sys.sleep(0.25)}
+            incProgress(1 / 10) 
+            Sys.sleep(0.25)}
           
           # Define parameters to be passed to the Rmd file
           params <- list(data = data())  
