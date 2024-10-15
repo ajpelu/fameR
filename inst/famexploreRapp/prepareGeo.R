@@ -21,7 +21,6 @@ prepareGeo <- function(x) {
     stop("Input must be a non-null data frame.")
   }
   
-  
   # Check if input data frame contains the required columns
   if (!all(c("campo", "valor") %in% colnames(x))) {
     stop("Input data frame must have columns named 'campo' and 'valor'.")
