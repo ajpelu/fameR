@@ -15,6 +15,26 @@
 #' 
 #' 
 biometryStat <- function(x, variables = c("altura_cm", "dmayor_cm", "dmenor_cm")) {
+  
+  if (!inherits(x, "data.frame")) {
+    stop("Error: 'x' debe ser un data frame.")
+  }
+  
+  if (!is.character(variables) || length(variables) == 0) {
+    stop("Error: 'variables' debe ser un vector de caracteres no vacío.")
+  }
+  
+  missing_vars <- setdiff(variables, names(x))
+  if (length(missing_vars) > 0) {
+    stop(paste("Error: Las siguientes variables no están presentes en 'x':", paste(missing_vars, collapse = ", ")))
+  }
+  
+  non_numeric_vars <- variables[!sapply(x[variables], function(col) inherits(col, "numeric"))]
+  if (length(non_numeric_vars) > 0) {
+    stop(paste("Error: Las siguientes variables no son numéricas:", paste(non_numeric_vars, collapse = ", ")))
+  }
+  
+  
   result <- x |>
     dplyr::select(dplyr::all_of(variables)) |>
     purrr::map_dfr(~ data.frame(
