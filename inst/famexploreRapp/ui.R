@@ -112,23 +112,17 @@ ui <- page_navbar(
   ")),
   
   sidebar = sidebar(
-    shiny::h4("Estadillo de campo"), 
+    shiny::h5("Estadillo de campo"), 
     fileInput("upload", label = "Sube tu archivo (o usa el conjunto de datos de ejemplo)", 
               accept = c(".ods", ".xlsx"),
               placeholder = "Seleccione el archivo a subir"),
     checkboxInput("use_example", "Usar datos de ejemplo", value = FALSE),  # Checkbox para usar datos de ejemplo
     actionButton("submit", "Procesar"),
-    shiny::br(), 
-    shiny::br(),
-    shiny::h4("Información espacial"),
+    shiny::h5("Información espacial"),
     fileInput(inputId = "upload_spat",
               label = "Cargar shapefile ('.shp','.dbf','.sbn','.sbx','.shx','.prj')",
               multiple = TRUE,
               accept = c('.shp','.dbf','.sbn','.sbx','.shx','.prj')),
-    shiny::br(), 
-    shiny::br(),
-    shiny::br(), 
-    shiny::br(),
     downloadButton("generateReport", "Generar Informe")
     
   ),
