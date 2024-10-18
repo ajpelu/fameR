@@ -5,7 +5,7 @@ Authors@R:
   c(
     person("Antonio Jesús", "Pérez-Luque", , "ajpelu@gmail.com", role = c("cre", "aut"),
            comment = c(ORCID = "0000-0002-1747-0469")),
-    person("Juan", "Lorite", ,"lorite@ugr", role = c("cre", "ctb"),
+    person("Juan", "Lorite", ,"lorite@ugr", role = c("aut", "ctb"),
            comment = c(ORCID = "0000-0003-4617-8069"))
            )
 Description: A shiny app that explores data from Threathened Flora. It uses customized
