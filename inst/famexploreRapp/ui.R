@@ -19,6 +19,8 @@ library(plotly)
 library(vegan)
 library(formattable)
 library(kableExtra)
+library(rintrojs)
+
 
 
 # hojas_validas <- read_csv("../data_shiny/hojas_oficiales.csv")
@@ -40,7 +42,10 @@ cards <- list(
                    card_header("Composición de la comunidad"), 
                    plotlyOutput("plotcomunidad")), 
   herbivoria_plot = card(full_screen = TRUE, plotlyOutput("plotherbivoria")), 
-  herbivoria_tabla = card(full_screen = FALSE, formattableOutput("tablaherbivoria"))
+  herbivoria_tabla = card(full_screen = FALSE, formattableOutput("tablaherbivoria")), 
+  more_info = card(full_screen = TRUE, 
+                   card_header = "Más infomración", 
+                   includeMarkdown("www/more_info.md"))
 )
 
 ### Value box 
@@ -99,7 +104,9 @@ vb <- list(
 link_github <- tags$a(shiny::icon("github"), "Source code", href = "https://github.com/ajpelu/famexploreR/", target = "_blank")
 
 ui <- page_navbar(
-  title = "famExploreR v 1.0.0",
+  title = "famexploreR v 1.0.0",
+  
+  introjsUI(), 
   
   # Agrega el estilo CSS para cambiar el tamaño de la fuente de los labels 
   tags$style(HTML("
@@ -117,33 +124,44 @@ ui <- page_navbar(
       font-size: 20px;
       color: #666;
     }
-    #bottom-icon img {
-      width: 50px;  /* Cambia este valor según el tamaño de la imagen */
-      height: auto;
-    }
   ")),
   
   sidebar = sidebar(
     tags$div(style = "margin-top: 20px; text-align: center;",
              tags$img(src = "logo_famexplorer.png", height = "175px", alt = "Logo Famexplorer")),
-    shiny::h5("Estadillo de campo"), 
-    fileInput("upload", label = "Sube tu archivo (o usa el conjunto de datos de ejemplo)", 
-              accept = c(".ods", ".xlsx"),
-              placeholder = "Seleccione el archivo a subir"),
-    checkboxInput("use_example", "Usar datos de ejemplo", value = FALSE),  # Checkbox para usar datos de ejemplo
-    actionButton("submit", "Procesar"),
+
+    introBox(
+      shiny::h5("Estadillo de campo"), 
+      fileInput("upload", label = "Sube tu archivo (o usa el conjunto de datos de ejemplo)", 
+                accept = c(".ods", ".xlsx"),
+                placeholder = "Seleccione el archivo a subir"),
+      checkboxInput("use_example", "Usar datos de ejemplo", value = FALSE),  # Checkbox para usar datos de ejemplo
+      actionButton("submit", "Procesar"),
+      data.step = 1,
+      data.intro = "Puedes subir tus datos en formato .ods o .xlsx. También puedes usar los datos de ejemplo."
+    ),
+    
+    introBox(
     shiny::h5("Información espacial"),
     fileInput(inputId = "upload_spat",
               label = "Cargar shapefile ('.shp','.dbf','.sbn','.sbx','.shx','.prj')",
               multiple = TRUE,
               accept = c('.shp','.dbf','.sbn','.sbx','.shx','.prj')),
-    downloadButton("generateReport", "Generar Informe")
+    data.step = 2,
+    data.intro = "Si tienes datos espaciales puedes subirlos (formato shapefile)"
+    ),
     
-  ),
+    introBox(
+    downloadButton("generateReport", "Generar Informe"),
+    data.step = 4,
+    data.intro = "Puedes generar un informe con los datos de tu estudio"
+    )),
+  
+  introBox(
   navset_card_tab(
-    nav_panel("Datos generales", cards[["metadatos"]]),
-    nav_panel("Localización", cards[["mapa"]]),
-    nav_menu("Suelos",
+      nav_panel("Datos generales", cards[["metadatos"]]),
+      nav_panel("Localización", cards[["mapa"]]),
+      nav_menu("Suelos",
              nav_panel("Parámetros",
                        layout_columns(fill = TRUE,
                                       col_widths = c(-2, 4, 4, -2),
@@ -156,7 +174,7 @@ ui <- page_navbar(
                        layout_columns(fill = TRUE,
                                       col_widths = c(-2, 8, -2),
                                       cards[["suelos"]]))),
-    nav_menu("Especie Focal", 
+        nav_menu("Especie Focal", 
              nav_panel("Biometria", 
                        layout_columns(
                          fill = TRUE,
@@ -171,7 +189,7 @@ ui <- page_navbar(
                          fill = TRUE,
                          col_widths = c(-2, 8, -2),
                          cards[["floracion"]]))),
-    nav_menu("Herbivoría",
+      nav_menu("Herbivoría",
              nav_panel("Gráfico", cards[["herbivoria_plot"]]), 
              nav_panel("Tabla",
                        fill = FALSE,
@@ -179,7 +197,7 @@ ui <- page_navbar(
                          col_widths = c(-4, 4, -4),
                          cards[["herbivoria_tabla"]])
              )),
-    nav_panel(
+      nav_panel(
       "Vecindad",
       layout_columns(
         fill = FALSE,
@@ -195,7 +213,7 @@ ui <- page_navbar(
         fill = FALSE, 
         col_widths = c(-3, 6, -3),
         downloadButton("downloadVecindad", "Download Plot"))
-    ), 
+    ),
     nav_panel(
       "Comunidad",
       layout_columns(
@@ -210,12 +228,20 @@ ui <- page_navbar(
         col_widths = c(-2, 8, -2),
         cards[["comunidad"]])
       # downloadButton("downloadVecindad", "Download Plot")
+    ), 
+    nav_panel(
+      "More Info",
+      layout_columns(
+        fill = TRUE,
+        col_widths = c(-2, 8, -2),
+        cards[["more_info"]]  
+      )
     ) 
-  ),
+    ),
+  data.step = 3, 
+  data.intro  = "Aquí puedes explorar los datos de tu estudio. Puedes ver la localización de tus parcelas, los parámetros de suelo, la biometría de la especie focal, la vecindad de la especie focal y la comunidad de plantas. También puedes ver la herbivoría en la especie focal."
+),
+
   nav_spacer(),
-  nav_menu(
-    title = "About",
-    align = "right",
-    nav_item(link_github)
-  )
+  nav_item(link_github)
 )

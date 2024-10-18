@@ -36,9 +36,38 @@ source("readAllsheets.R")
 source("summarizeSoil.R")
 source("ternaryPlot.R")
 source("vecindadPlot.R")
+source("utils.R")
 
 
 server <- function(input, output, session) {
+  
+  # Show introduction text (Intro modal)
+  observeEvent("", {
+    showModal(modalDialog(
+      includeHTML("intro_text.html"),
+      easyClose = TRUE,
+      footer = tagList(
+        actionButton(inputId = "intro", label = "Introduction Tour", icon = icon("info-circle"))
+      )
+    ))
+  })
+  
+  observeEvent(input$intro,{
+    removeModal()
+  })
+  
+  # Show tour
+  observeEvent(input$intro,
+               introjs(session,
+                       options = list("nextLabel" = "Continue",
+                                      "prevLabel" = "Previous",
+                                      "doneLabel" = "Done"))
+  )
+  
+  
+  
+  
+  
   
   example_file <- "../data_ejemplo/ficha_campo.xlsx"
   
@@ -263,8 +292,8 @@ server <- function(input, output, session) {
     } else {
       initial_map()
     }
-    })
-    
+  })
+  
   # Vecindad 
   stat_vecinos_sps <- reactive({
     x <- data()$vecindad |> na.omit()
