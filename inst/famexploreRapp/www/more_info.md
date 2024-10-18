@@ -7,7 +7,7 @@ La aplicación permite que técnicos y agentes de medio ambiente, sin necesidad 
 
 ### **Cómo citar**
 
-Pérez-Luque, A.J. & Lorite J. (2023). famexploreR. flujo de trabajo para gestión de datos de Flora Amenazada de Andalucía. https://ajpelu.github.io/famexploreR/. version 1.0.0 doi: [10.5281/zenodo.7347993](https://doi.org/10.5281/zenodo.7347993) 
+Pérez-Luque, A.J. & Lorite J. (2023). famexploreR. flujo de trabajo para gestión de datos de Flora Amenazada de Andalucía. https://ajpelu.github.io/famexploreR/. version 1.0.0 doi: [10.5281/zenodo.13952463](https://doi.org/10.5281/zenodo.13952463) 
 
 ##### Créditos ([CRedIT](https://credit.niso.org/) Statment)
 
