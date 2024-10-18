@@ -45,6 +45,8 @@ Imports:
     formattable,
     kableExtra,
     flextable,
-    readr
+    readr,
+Suggests:   
+    rintrojs
 Config/Needs/website: rmarkdown
 URL: https://ajpelu.github.io/famexploreR/

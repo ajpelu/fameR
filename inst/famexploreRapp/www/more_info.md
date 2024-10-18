@@ -13,7 +13,7 @@ Pérez-Luque, A.J. & Lorite J. (2023). famexploreR. flujo de trabajo para gesti�
 
 -   [**Antonio J. Pérez-Luque**](https://github.com/ajpelu) <a href="https://orcid.org/0000-0002-1747-0469" target="orcid.widget"> <img src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" alt="ORCID logo" width="16" height="16"/></a>: Conceptualization, Data curation, Methodology, Software, Validation, Visualization. 
 
--   **Juan Lorite** <a href="https://orcid.org/0000-0002-4888-0401" target="orcid.widget"> <img src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" alt="ORCID logo" width="16" height="16"/></a>: Funding acquisition, Project administration, and Resources.
+-   **Juan Lorite** <a href="https://orcid.org/0000-0003-4617-8069" target="orcid.widget"> <img src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" alt="ORCID logo" width="16" height="16"/></a>: Funding acquisition, Project administration, and Resources.
 
 #### Last update
 - 2024/09/01 
