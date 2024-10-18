@@ -28,7 +28,7 @@ hojas_validas <- read_csv("../data_shiny/hojas_oficiales.csv") |> pull()
 cards <- list(
   metadatos = card(full_screen = TRUE, htmlOutput("metadataText")), 
   soil_parameters = card(card_header("Parámetros"), 
-                 tableOutput("suelos_tabla")), 
+                         tableOutput("suelos_tabla")), 
   biometria = card(full_screen = TRUE, plotOutput("biometria")),
   biometria_stats = card(full_screen = TRUE, tableOutput("biometria_stats")),
   floracion = card(full_screen = TRUE, plotlyOutput("plotfloracion")),
@@ -109,9 +109,23 @@ ui <- page_navbar(
     #upload_spat-label {
       font-size: 12px;
     }
+    #bottom-icon {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 20px;
+      color: #666;
+    }
+    #bottom-icon img {
+      width: 50px;  /* Cambia este valor según el tamaño de la imagen */
+      height: auto;
+    }
   ")),
   
   sidebar = sidebar(
+    tags$div(style = "margin-top: 20px; text-align: center;",
+             tags$img(src = "logo_famexplorer.png", height = "175px", alt = "Logo Famexplorer")),
     shiny::h5("Estadillo de campo"), 
     fileInput("upload", label = "Sube tu archivo (o usa el conjunto de datos de ejemplo)", 
               accept = c(".ods", ".xlsx"),
@@ -164,7 +178,7 @@ ui <- page_navbar(
                        layout_columns(
                          col_widths = c(-4, 4, -4),
                          cards[["herbivoria_tabla"]])
-                       )),
+             )),
     nav_panel(
       "Vecindad",
       layout_columns(
