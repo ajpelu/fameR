@@ -52,3 +52,4 @@ computeFlowering <- function(x, var_interest) {
   result_summary <- dplyr::bind_rows(summary_list)
   return(result_summary)
 }
+

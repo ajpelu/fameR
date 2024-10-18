@@ -31,3 +31,7 @@ biometryStat <- function(x, variables = c("altura_cm", "dmayor_cm", "dmenor_cm")
     ))
   return(result)
 }
+
+
+
+

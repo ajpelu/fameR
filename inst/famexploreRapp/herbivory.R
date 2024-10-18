@@ -28,7 +28,7 @@ herbivory <- function(data, bar_color = "blue", point_fill = "green", point_colo
       se_damage = sd_damage / sqrt(length(comido_pct))
     ) |>
     tidyr::complete(id_individuo = unique(data$id_individuo), 
-                    fill = list(leaf_damages_pct = 0, mean_damage = NA, sd_damage = NA, se_damage = NA)) |>
+             fill = list(leaf_damages_pct = 0, mean_damage = NA, sd_damage = NA, se_damage = NA)) |>
     dplyr::mutate(id_individuo = as.factor(id_individuo))
   
   # Create the ggplot
