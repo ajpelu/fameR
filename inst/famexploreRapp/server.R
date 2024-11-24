@@ -113,7 +113,7 @@ server <- function(input, output, session) {
         shiny::h6(paste0("Tipo: ", x$vallado_tipo)),
         shiny::h6(paste0("Año de instalación: ", x$vallado_year)), 
         shiny::h6(paste0("Dimensiones (perímetro): ", x$vallado_perimetro)), 
-        shiny::h6(paste0("Estado del vallado): ", x$vallado_perimetro)), 
+        shiny::h6(paste0("Estado del vallado: ", x$vallado_estado)), 
         shiny::h6("Excrementos"),
         shiny::h6(HTML(paste0("<strong>Densidad excrementos (n/m", tags$sup(2), "):</strong> ", data()$excrementos$excrementos_m2, " (", 
                               data()$excrementos$excrementos_n, " en ", data()$excrementos$superficie_m2, ")"))),

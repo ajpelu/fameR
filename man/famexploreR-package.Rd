@@ -18,10 +18,5 @@ Useful links:
 \author{
 \strong{Maintainer}: Antonio Jesús Pérez-Luque \email{ajpelu@gmail.com} (\href{https://orcid.org/0000-0002-1747-0469}{ORCID})
 
-Other contributors:
-\itemize{
-  \item Juan Lorite \email{lorite@ugr} (\href{https://orcid.org/0000-0003-4617-8069}{ORCID}) [contributor]
-}
-
 }
 \keyword{internal}
